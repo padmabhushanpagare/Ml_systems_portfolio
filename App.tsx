@@ -2,6 +2,7 @@ import React from 'react';
 import Hero from './components/Hero';
 import Approach from './components/Approach';
 import Projects from './components/Projects';
+import Demo from './components/Demo';
 import Stack from './components/Stack';
 import Blog from './components/Blog';
 import Contact from './components/Contact';
@@ -20,6 +21,7 @@ const App: React.FC = () => {
           <div className="hidden md:flex gap-8 text-sm font-medium text-gray-400">
             <a href="#approach" className="hover:text-white transition-colors">Approach</a>
             <a href="#projects" className="hover:text-white transition-colors">Work</a>
+            <a href="#demo" className="hover:text-white transition-colors">Demo</a>
             <a href="#blog" className="hover:text-white transition-colors">Writing</a>
             <a href="#contact" className="hover:text-white transition-colors">Contact</a>
           </div>
@@ -31,6 +33,7 @@ const App: React.FC = () => {
         <Hero />
         <Approach />
         <Projects />
+        <Demo />
         <Stack />
         <Blog />
         <Contact />
