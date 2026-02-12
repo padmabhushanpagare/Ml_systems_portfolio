@@ -28,47 +28,47 @@ const ChatAssistant: React.FC = () => {
 
     // 1. Projects
     if (text.includes('delivery') || text.includes('demo') || text.includes('regression')) {
-        return "PROJECT: Delivery Time Prediction\n\nPROBLEM: Inaccurate ETAs leading to customer dissatisfaction.\n\nAPPROACH: Simulated a weighted regression model with feature engineering (traffic density, rush hour logic, driver ratings) directly in the browser.\n\nIMPACT: Demonstrates how feature engineering affects model output logic in real-time.\n\nTOOLS: React, TypeScript, Manual Regression Logic.";
+        return "PROJECT: Delivery Time Prediction\n\nBUSINESS PROBLEM: Inaccurate ETAs leading to customer churn and support volume.\n\nDATA STRATEGY: Real-time ingestion of traffic/weather signals combined with historical driver efficiency logs.\n\nMODELING APPROACH: Gradient Boosting Regressor (XGBoost) with heavy feature engineering on temporal patterns.\n\nOPTIMIZATION: Sub-100ms inference via aggressive feature caching in Redis.\n\nDEPLOYMENT: Served via FastAPI on Kubernetes; client-side simulation shown here for demonstration.";
     }
 
     if (text.includes('maintenance') || text.includes('anomaly') || text.includes('sensor') || text.includes('project 1') || text.includes('stock')) {
-        return "PROJECT: Predictive Maintenance System\n\nPROBLEM: Unplanned downtime costing $50k/hour with high false positive rates.\n\nAPPROACH: Architected LSTM-based anomaly detection on high-frequency sensor data. Implemented drift monitoring via EvidentlyAI.\n\nIMPACT: Reduced downtime by 35% ($2M/year savings) and false alarms by 60%.\n\nTOOLS: Python, TensorFlow, Kubernetes, FastAPI.";
+        return "PROJECT: Predictive Maintenance System\n\nBUSINESS PROBLEM: Unplanned manufacturing downtime costing $50k/hr + high false alarm rates.\n\nDATA STRATEGY: High-frequency IoT sensor streaming via Kafka; sliding window aggregation.\n\nMODELING APPROACH: LSTM Autoencoders for unsupervised anomaly detection on multivariate time-series.\n\nOPTIMIZATION: Quantized models deployed to edge gateways to reduce bandwidth costs.\n\nDEPLOYMENT: CI/CD pipeline ensures models are retrained weekly on verified incidents; drift monitoring via EvidentlyAI.";
     }
 
     if (text.includes('recommend') || text.includes('ranking') || text.includes('feed') || text.includes('project 2') || text.includes('dashboard')) {
-        return "PROJECT: Real-time Recommendation Engine\n\nPROBLEM: Static sorting resulted in low engagement (2.5% conversion).\n\nAPPROACH: Designed a two-tower retrieval/ranking system with TFX and a Redis feature store for <50ms inference.\n\nIMPACT: Boosted CTR by 12% and GMV by 8%.\n\nTOOLS: PyTorch, Redis, TFX, BigQuery.";
+        return "PROJECT: Real-time Recommendation Engine\n\nBUSINESS PROBLEM: Static rule-based feed resulted in low engagement (2.5% conversion).\n\nDATA STRATEGY: Unified feature store (Feast/Redis) to eliminate training-serving skew.\n\nMODELING APPROACH: Two-tower architecture: Matrix Factorization for retrieval, Deep Learning (DLRM) for ranking.\n\nOPTIMIZATION: Approximate Nearest Neighbor (ANN) search (Faiss) for <50ms candidate generation.\n\nDEPLOYMENT: TFX pipelines for continuous training; online A/B testing framework.";
     }
 
     if (text.includes('legal') || text.includes('nlp') || text.includes('document') || text.includes('project 3')) {
-        return "PROJECT: Legal Document Intelligence\n\nPROBLEM: Manual contract review consumed 40+ hours/week.\n\nAPPROACH: Fine-tuned RoBERTa for NER and clause classification with a human-in-the-loop active learning pipeline.\n\nIMPACT: Automated 85% of initial review tasks.\n\nTOOLS: HuggingFace, NLP, Docker, PostgreSQL.";
+        return "PROJECT: Legal Document Intelligence\n\nBUSINESS PROBLEM: Legal team spending 40+ hrs/week on manual contract compliance checks.\n\nDATA STRATEGY: Active learning pipeline to bootstrap labeled datasets from proprietary documents.\n\nMODELING APPROACH: Domain-adapted RoBERTa fine-tuned for Named Entity Recognition (NER) and risk classification.\n\nOPTIMIZATION: Distillation to smaller student models to reduce inference costs by 60%.\n\nDEPLOYMENT: Human-in-the-loop workflow where low-confidence predictions are routed to experts.";
     }
 
     // 2. Skills / Stack / ML
     if (text.includes('skill') || text.includes('stack') || text.includes('technology') || text.includes('tool') || text.includes('language') || text.includes('python') || text.includes('ml')) {
-        return "TECHNICAL STACK\n\nLANGUAGES: Python, SQL, TypeScript, C++, Rust.\n\nML FRAMEWORKS: PyTorch, TensorFlow, Scikit-learn, HuggingFace.\n\nMLOPS: Docker, Kubernetes, AWS SageMaker, MLflow, Terraform.\n\nDATA: Spark, Kafka, PostgreSQL, dbt.";
+        return "TECHNICAL STACK STRATEGY\n\nLANGUAGES: Python (Ecosystem), Rust (Performance), SQL (Data).\n\nMODELING: PyTorch for research flexibility; XGBoost for tabular efficiency.\n\nMLOPS: Kubernetes for scalable orchestration; MLflow for experiment tracking; Terraform for infrastructure-as-code.\n\nDATA: Spark/dbt for robust transformations; Redis for low-latency feature serving.\n\nPHILOSOPHY: I choose tools that balance developer velocity with production reliability.";
     }
 
     // 3. Approach / Experience
     if (text.includes('approach') || text.includes('philosophy') || text.includes('method') || text.includes('experience') || text.includes('background')) {
-        return "SYSTEMS APPROACH\n\nI focus on the full ML lifecycle: from Data Strategy (Feature Stores) to Modeling (Iterative Baselines) and Productionization (Scalable APIs), ensuring continuous value via rigorous Monitoring (Drift/Latency).";
+        return "SYSTEMS-FIRST PHILOSOPHY\n\nI prioritize the end-to-end system over just the model architecture:\n\n1. DATA-CENTRICITY: Ensuring clean, versioned data lineage.\n2. BASELINES: Starting with simple heuristics to establish value.\n3. OBSERVABILITY: If you can't monitor it (drift, latency, bias), don't deploy it.\n4. FEEDBACK LOOPS: Designing systems that improve with usage (flywheel effect).";
     }
 
-    // 4. Optimization (New)
+    // 4. Optimization
     if (text.includes('optimize') || text.includes('optimization') || text.includes('latency') || text.includes('fast')) {
-        return "OPTIMIZATION STRATEGY\n\nMODEL: I employ quantization (INT8), knowledge distillation, and ONNX Runtime to reduce inference latency.\n\nSYSTEM: I implement aggressive caching layers (Redis), async processing queues (Kafka), and horizontal autoscaling on Kubernetes to handle high throughput.";
+        return "OPTIMIZATION TACTICS\n\nINFERENCE: Knowledge distillation, graph optimization (TensorRT/ONNX), and quantization (INT8).\n\nSYSTEM: Async IO, aggressive caching strategies, and horizontal autoscaling.\n\nDATA: Moving compute closer to data (predicate pushdown) and efficient serialization (Parquet/Protobuf).";
     }
 
     // 5. Contact
     if (text.includes('contact') || text.includes('email') || text.includes('hire') || text.includes('resume')) {
-        return "CONTACT INFO\n\nYou can reach me at hello@alexchen.dev. I am currently open to discussing new opportunities in ML Systems Engineering.";
+        return "GET IN TOUCH\n\nI am open to discussing ML Systems Engineering roles where I can drive architectural decisions.\n\nEmail: hello@alexchen.dev\n\nCheck my GitHub for code samples.";
     }
 
     // 6. Casual / Fallback
     if (text.includes('hello') || text.includes('hi ') || text === 'hi' || text.includes('hey')) {
-        return "Hello! Feel free to ask about my specific projects like the 'Predictive Maintenance System' or my technical skills.";
+        return "Hi there. I can explain my work on Predictive Maintenance, Recommender Systems, or my MLOps Strategy. What interests you?";
     }
 
-    return "I can provide details on my Machine Learning projects, MLOps experience, or technical stack. Try asking about 'Predictive Maintenance', 'Skills', or 'Contact'.";
+    return "I'm trained to discuss my engineering work. Try asking about 'Maintenance System', 'Optimization', or 'Data Strategy'.";
   };
 
   const sendMessage = (text: string) => {
