@@ -4,6 +4,7 @@ import { MessageSquare, X, Send, Bot } from 'lucide-react';
 const ChatAssistant: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
   const [messages, setMessages] = useState<{role: 'user' | 'assistant', text: string}[]>([
     { role: 'assistant', text: "Hello! I'm an AI assistant trained on Alex's portfolio. Ask me about his projects, skills, or experience." }
   ]);
@@ -13,7 +14,50 @@ const ChatAssistant: React.FC = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  useEffect(scrollToBottom, [messages]);
+  useEffect(scrollToBottom, [messages, isTyping]);
+
+  const generateResponse = (input: string): string => {
+    const text = input.toLowerCase();
+
+    // 1. Projects
+    if (text.includes('delivery') || text.includes('demo') || text.includes('regression')) {
+        return "PROJECT: Delivery Time Prediction\n\nPROBLEM: Inaccurate ETAs leading to customer dissatisfaction.\n\nAPPROACH: Simulated a weighted regression model with feature engineering (traffic density, rush hour logic, driver ratings) directly in the browser.\n\nIMPACT: Demonstrates how feature engineering affects model output logic in real-time.\n\nTOOLS: React, TypeScript, Manual Regression Logic.";
+    }
+
+    if (text.includes('maintenance') || text.includes('anomaly') || text.includes('sensor') || text.includes('project 1') || text.includes('stock')) {
+        return "PROJECT: Predictive Maintenance System\n\nPROBLEM: Unplanned downtime costing $50k/hour with high false positive rates.\n\nAPPROACH: Architected LSTM-based anomaly detection on high-frequency sensor data. Implemented drift monitoring via EvidentlyAI.\n\nIMPACT: Reduced downtime by 35% ($2M/year savings) and false alarms by 60%.\n\nTOOLS: Python, TensorFlow, Kubernetes, FastAPI.";
+    }
+
+    if (text.includes('recommend') || text.includes('ranking') || text.includes('feed') || text.includes('project 2') || text.includes('dashboard')) {
+        return "PROJECT: Real-time Recommendation Engine\n\nPROBLEM: Static sorting resulted in low engagement (2.5% conversion).\n\nAPPROACH: Designed a two-tower retrieval/ranking system with TFX and a Redis feature store for <50ms inference.\n\nIMPACT: Boosted CTR by 12% and GMV by 8%.\n\nTOOLS: PyTorch, Redis, TFX, BigQuery.";
+    }
+
+    if (text.includes('legal') || text.includes('nlp') || text.includes('document') || text.includes('project 3')) {
+        return "PROJECT: Legal Document Intelligence\n\nPROBLEM: Manual contract review consumed 40+ hours/week.\n\nAPPROACH: Fine-tuned RoBERTa for NER and clause classification with a human-in-the-loop active learning pipeline.\n\nIMPACT: Automated 85% of initial review tasks.\n\nTOOLS: HuggingFace, NLP, Docker, PostgreSQL.";
+    }
+
+    // 2. Skills / Stack / ML
+    if (text.includes('skill') || text.includes('stack') || text.includes('technology') || text.includes('tool') || text.includes('language') || text.includes('python') || text.includes('ml')) {
+        return "TECHNICAL STACK\n\nLANGUAGES: Python, SQL, TypeScript, C++, Rust.\n\nML FRAMEWORKS: PyTorch, TensorFlow, Scikit-learn, HuggingFace.\n\nMLOPS: Docker, Kubernetes, AWS SageMaker, MLflow, Terraform.\n\nDATA: Spark, Kafka, PostgreSQL, dbt.";
+    }
+
+    // 3. Approach / Experience
+    if (text.includes('approach') || text.includes('philosophy') || text.includes('method') || text.includes('experience') || text.includes('background')) {
+        return "SYSTEMS APPROACH\n\nI focus on the full ML lifecycle: from Data Strategy (Feature Stores) to Modeling (Iterative Baselines) and Productionization (Scalable APIs), ensuring continuous value via rigorous Monitoring (Drift/Latency).";
+    }
+
+    // 4. Contact
+    if (text.includes('contact') || text.includes('email') || text.includes('hire') || text.includes('resume')) {
+        return "CONTACT INFO\n\nYou can reach me at hello@alexchen.dev. I am currently open to discussing new opportunities in ML Systems Engineering.";
+    }
+
+    // 5. Casual / Fallback
+    if (text.includes('hello') || text.includes('hi ') || text === 'hi' || text.includes('hey')) {
+        return "Hello! Feel free to ask about my specific projects like the 'Predictive Maintenance System' or my technical skills.";
+    }
+
+    return "I can provide details on my Machine Learning projects, MLOps experience, or technical stack. Try asking about 'Predictive Maintenance', 'Skills', or 'Contact'.";
+  };
 
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,14 +67,14 @@ const ChatAssistant: React.FC = () => {
     const userMsg = inputValue;
     setMessages(prev => [...prev, { role: 'user', text: userMsg }]);
     setInputValue("");
+    setIsTyping(true);
 
-    // Simulate AI delay and response
+    // Simulate AI delay
     setTimeout(() => {
-        setMessages(prev => [...prev, { 
-            role: 'assistant', 
-            text: "This is a demo interaction running in the browser. In a production environment, this would connect to a RAG pipeline to query my resume and technical documentation." 
-        }]);
-    }, 1000);
+        const responseText = generateResponse(userMsg);
+        setMessages(prev => [...prev, { role: 'assistant', text: responseText }]);
+        setIsTyping(false);
+    }, 800);
   };
 
   return (
@@ -67,7 +111,7 @@ const ChatAssistant: React.FC = () => {
             {messages.map((msg, idx) => (
                 <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                     <div 
-                        className={`max-w-[85%] p-3 text-sm leading-relaxed ${
+                        className={`max-w-[85%] p-3 text-sm leading-relaxed whitespace-pre-wrap ${
                             msg.role === 'user' 
                                 ? 'bg-accent text-white rounded-2xl rounded-br-sm shadow-sm' 
                                 : 'bg-surface border border-gray-700 text-gray-300 rounded-2xl rounded-bl-sm'
@@ -77,6 +121,18 @@ const ChatAssistant: React.FC = () => {
                     </div>
                 </div>
             ))}
+            
+            {/* Typing Indicator */}
+            {isTyping && (
+                <div className="flex justify-start">
+                    <div className="bg-surface border border-gray-700 p-3 rounded-2xl rounded-bl-sm flex gap-1.5 items-center h-10">
+                        <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-[bounce_1s_infinite_-0.3s]"></span>
+                        <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-[bounce_1s_infinite_-0.15s]"></span>
+                        <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-[bounce_1s_infinite]"></span>
+                    </div>
+                </div>
+            )}
+            
             <div ref={messagesEndRef} />
         </div>
 
