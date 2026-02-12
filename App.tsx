@@ -14,14 +14,31 @@ import Contact from './components/Contact';
 import Footer from './components/Footer';
 import ChatAssistant from './components/ChatAssistant';
 import { Mail } from 'lucide-react';
+import { trackEvent } from './utils/analytics';
 
 const App: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
+    let hasTracked75 = false;
+
     const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const docHeight = document.documentElement.scrollHeight;
+      
       // Show floating elements after scrolling past Hero (approx 500px)
-      setIsScrolled(window.scrollY > 500);
+      setIsScrolled(scrollY > 500);
+
+      // Track 75% Scroll Depth
+      const scrollPercent = (scrollY + windowHeight) / docHeight;
+      if (!hasTracked75 && scrollPercent >= 0.75) {
+        trackEvent('scroll_depth', { 
+            event_category: 'engagement', 
+            event_label: '75_percent' 
+        });
+        hasTracked75 = true;
+      }
     };
     
     window.addEventListener('scroll', handleScroll);
@@ -75,6 +92,7 @@ const App: React.FC = () => {
       {/* Floating Contact Pill (Visible on Scroll) */}
       <a 
         href="#contact"
+        onClick={() => trackEvent('contact_click', { event_category: 'engagement', event_label: 'floating_pill' })}
         className={`fixed bottom-8 left-6 md:left-12 z-40 flex items-center gap-3 bg-surface/80 backdrop-blur-md border border-gray-700/50 pr-5 pl-4 py-2.5 rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.3)] transition-all duration-500 hover:border-accent hover:bg-surface group ${
           isScrolled ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0 pointer-events-none'
         }`}

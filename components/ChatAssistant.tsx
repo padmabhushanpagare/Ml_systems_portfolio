@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MessageSquare, X, Send, Bot, Sparkles } from 'lucide-react';
+import { trackEvent } from '../utils/analytics';
 
 const ChatAssistant: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,6 +18,11 @@ const ChatAssistant: React.FC = () => {
     "How do you optimize models?"
   ];
 
+  const handleOpen = () => {
+    setIsOpen(true);
+    trackEvent('chat_opened', { event_category: 'engagement' });
+  };
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -31,6 +37,8 @@ const ChatAssistant: React.FC = () => {
     setMessages(prev => [...prev, newUserMsg]);
     setInputValue("");
     setIsTyping(true);
+
+    trackEvent('chat_message_sent', { event_category: 'engagement' });
 
     // Capture recent history (limit to last 5 messages for context window efficiency)
     const history = messages.slice(-5);
@@ -187,7 +195,7 @@ const ChatAssistant: React.FC = () => {
         </div>
 
         <button 
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={isOpen ? () => setIsOpen(false) : handleOpen}
             className="h-14 w-14 bg-accent hover:bg-accent-hover text-white rounded-full shadow-lg shadow-accent/20 flex items-center justify-center transition-all hover:scale-105 active:scale-95"
             aria-label={isOpen ? "Close Chat" : "Open Chat"}
         >

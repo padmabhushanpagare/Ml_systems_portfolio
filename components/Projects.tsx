@@ -3,6 +3,7 @@ import Section from './Section';
 import { TrendingUp, AlertCircle, Layers, ArrowRight } from 'lucide-react';
 import { Project } from '../types';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
+import { trackEvent } from '../utils/analytics';
 
 const projects: Project[] = [
   {
@@ -47,6 +48,13 @@ const ProjectCard: React.FC<{ project: Project; index: number }> = ({ project, i
   // Calculate staggered delay class
   const delayClass = index === 0 ? '' : index === 1 ? 'delay-200' : 'delay-400';
 
+  const handleCaseStudyClick = () => {
+    trackEvent('view_case_study', { 
+        event_category: 'engagement', 
+        event_label: project.title 
+    });
+  };
+
   return (
     <article 
       ref={ref}
@@ -76,6 +84,7 @@ const ProjectCard: React.FC<{ project: Project; index: number }> = ({ project, i
             
             <a 
               href={project.caseStudyUrl}
+              onClick={handleCaseStudyClick}
               className="inline-flex items-center gap-2 text-sm font-bold text-accent hover:text-white transition-colors border border-accent/20 bg-accent/5 px-4 py-2 rounded-full hover:bg-accent/10 whitespace-nowrap"
             >
               View Case Study <ArrowRight size={16} />

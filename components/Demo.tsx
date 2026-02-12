@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Section from './Section';
 import { Calculator, Play, MapPin, Star, Clock, Activity, BarChart3, Info } from 'lucide-react';
+import { trackEvent } from '../utils/analytics';
 
 interface Contribution {
   feature: string;
@@ -26,6 +27,11 @@ const Demo: React.FC = () => {
   const handlePredict = () => {
     if (isAnimating) return;
     setIsAnimating(true);
+    
+    trackEvent('ml_demo_predict', { 
+        event_category: 'engagement', 
+        event_label: 'delivery_time_model' 
+    });
 
     // --- ML Model Simulation Logic ---
     

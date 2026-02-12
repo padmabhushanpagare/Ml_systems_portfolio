@@ -1,6 +1,7 @@
 import React from 'react';
 import Section from './Section';
 import { Mail, Github, Linkedin, MapPin, Check } from 'lucide-react';
+import { trackEvent } from '../utils/analytics';
 
 const Contact: React.FC = () => {
   const roles = [
@@ -44,6 +45,7 @@ const Contact: React.FC = () => {
         <div className="flex flex-col sm:flex-row gap-4 mb-16 w-full sm:w-auto">
             <a 
             href="mailto:hello@alexchen.dev"
+            onClick={() => trackEvent('contact_click', { event_category: 'engagement', event_label: 'email' })}
             className="inline-flex items-center justify-center gap-2 bg-accent text-background font-bold px-8 py-4 rounded-xl hover:bg-accent-hover transition-all duration-300 hover:-translate-y-1 shadow-[0_4px_20px_rgba(16,185,129,0.3)]"
             >
             <Mail size={20} />
@@ -54,6 +56,7 @@ const Contact: React.FC = () => {
             href="https://linkedin.com/in/alexchen"
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackEvent('contact_click', { event_category: 'engagement', event_label: 'linkedin' })}
             className="inline-flex items-center justify-center gap-2 bg-background text-white border border-gray-700 font-medium px-8 py-4 rounded-xl hover:border-accent hover:text-accent transition-all duration-300 hover:-translate-y-1"
             >
             <Linkedin size={20} />
