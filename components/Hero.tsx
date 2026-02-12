@@ -19,7 +19,7 @@ const Hero: React.FC = () => {
   };
 
   return (
-    <section className="min-h-screen flex flex-col justify-center px-6 md:px-12 max-w-7xl mx-auto pt-20">
+    <section id="hero" className="min-h-screen flex flex-col justify-center px-6 md:px-12 max-w-7xl mx-auto pt-20">
       <div className="hero-animate">
         <span className="text-accent font-medium tracking-wider uppercase mb-4 block">
           Portfolio

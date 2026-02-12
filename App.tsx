@@ -13,6 +13,7 @@ import ProfessionalHighlights from './components/ProfessionalHighlights';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import ChatAssistant from './components/ChatAssistant';
+import ViewMode from './components/ViewMode';
 import { Mail } from 'lucide-react';
 import { trackEvent } from './utils/analytics';
 
@@ -51,23 +52,28 @@ const App: React.FC = () => {
       {/* Navigation (Sticky & Recruiter Optimized) */}
       <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-background/90 border-b border-white/5 transition-all duration-300">
         <div className="max-w-7xl mx-auto px-6 md:px-12 py-4 flex justify-between items-center">
-          <a href="#" className="text-white font-bold text-xl tracking-tight hover:opacity-80 transition-opacity">
-            AC<span className="text-accent">.</span>
-          </a>
-          
-          {/* Desktop Nav */}
-          <div className="hidden md:flex gap-8 text-sm font-medium text-gray-400 items-center">
-            <a href="#projects" className="hover:text-white hover:text-accent transition-colors">Projects</a>
-            <a href="#projects" className="hover:text-white hover:text-accent transition-colors">Case Studies</a>
-            <a href="#contact" className="px-4 py-2 bg-accent/10 text-accent border border-accent/20 rounded-full hover:bg-accent hover:text-black transition-all font-semibold">
-              Contact
+          <div className="flex items-center gap-8">
+            <a href="#" className="text-white font-bold text-xl tracking-tight hover:opacity-80 transition-opacity">
+              AC<span className="text-accent">.</span>
             </a>
+            
+            {/* Desktop Nav */}
+            <div className="hidden md:flex gap-8 text-sm font-medium text-gray-400 items-center">
+              <a href="#projects" className="hover:text-white hover:text-accent transition-colors">Projects</a>
+              <a href="#projects" className="hover:text-white hover:text-accent transition-colors">Case Studies</a>
+              <a href="#contact" className="hover:text-white hover:text-accent transition-colors">Contact</a>
+            </div>
           </div>
           
-          {/* Mobile Menu Trigger (Simple) */}
-          <a href="#contact" className="md:hidden text-sm font-bold text-accent">
-            Hire Me
-          </a>
+          <div className="flex items-center gap-4">
+             {/* View Mode Toggle System */}
+             <ViewMode />
+             
+             {/* Mobile Menu Trigger (Simple) */}
+             <a href="#contact" className="md:hidden text-sm font-bold text-accent">
+               Hire Me
+             </a>
+          </div>
         </div>
       </nav>
 
