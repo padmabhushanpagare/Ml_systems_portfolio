@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Section from './Section';
-import { ChevronDown, Terminal, CheckCircle2 } from 'lucide-react';
+import { ChevronDown, Terminal, CheckCircle2, ShieldAlert, Cpu } from 'lucide-react';
 
 interface Question {
   id: number;
@@ -8,7 +8,7 @@ interface Question {
   answer: string;
 }
 
-const questions: Question[] = [
+const techQuestions: Question[] = [
   {
     id: 1,
     question: "How do you approach feature engineering?",
@@ -51,6 +51,34 @@ const questions: Question[] = [
   }
 ];
 
+const scenarioQuestions: Question[] = [
+    {
+        id: 9,
+        question: "If your model performance drops after deployment, how would you debug?",
+        answer: "I isolate the failure domain systematically. 1) Infrastructure: Check 4xx/5xx errors and latency to rule out service failure. 2) Data Quality: Are upstream features broken or null? 3) Statistical Drift: Use KS-test to compare serving distribution vs training. 4) Segmentation: Is the failure global or specific to a region/device? Most 'model' bugs are actually data pipeline bugs."
+    },
+    {
+        id: 10,
+        question: "How would you redesign the system for 10x scale?",
+        answer: "Stateless scaling is easy; stateful is hard. 1) Architecture: Move from sync REST to async event-driven (Kafka) to handle backpressure. 2) Data: Switch from row-based lookups to batched vector retrieval. 3) Compute: Quantize models (FP16/INT8) to double throughput on existing hardware. 4) Caching: Cache top 20% of queries which often drive 80% of volume (Zipf's law)."
+    },
+    {
+        id: 11,
+        question: "What tradeoffs exist between accuracy and latency?",
+        answer: "It's a business ROI calculation. In fraud detection, latency < 200ms is non-negotiable; a slow model blocks the transaction. I measure the marginal revenue of +0.5% accuracy against the cloud cost of inference. If the heavier model costs 2x more compute for 0.1% lift, I reject it. Distillation is my go-to for compressing accuracy into low-latency runtimes."
+    },
+    {
+        id: 12,
+        question: "How would you handle data drift?",
+        answer: "Detection is useless without a mitigation plan. I set thresholds on feature distributions (KL Divergence). If breached: 1) Alerting: Notify the team. 2) Fallback: Automatically switch to a robust 'safe mode' model (e.g., simple logistic regression) or last-known-good version. 3) Remediation: Trigger a retrain on the freshest data window to capture the new pattern."
+    },
+    {
+        id: 13,
+        question: "When would you reject a high-accuracy model?",
+        answer: "I reject models that are 'fragile'. 1) Leakage: Using future information (e.g., 'delivery_timestamp' in a duration prediction). 2) Maintenance: Custom CUDA kernels that the team can't debug. 3) Ethics: Accuracy gained by overfitting to protected classes. 4) Cold Start: Models that are useless for new users. Reliability > Marginal Accuracy."
+    }
+];
+
 const InterviewQA: React.FC = () => {
   const [openId, setOpenId] = useState<number | null>(1);
 
@@ -58,9 +86,51 @@ const InterviewQA: React.FC = () => {
     setOpenId(openId === id ? null : id);
   };
 
+  const renderAccordion = (questions: Question[]) => (
+    <div className="space-y-4">
+        {questions.map((q) => (
+            <div 
+                key={q.id} 
+                className={`bg-surface border rounded-xl overflow-hidden transition-all duration-300 ${
+                    openId === q.id ? 'border-accent shadow-[0_0_20px_rgba(16,185,129,0.1)]' : 'border-gray-800 hover:border-gray-700'
+                }`}
+            >
+                <button 
+                    onClick={() => toggle(q.id)}
+                    className="w-full flex items-center justify-between p-6 text-left focus:outline-none"
+                    aria-expanded={openId === q.id}
+                >
+                    <span className={`font-semibold text-lg transition-colors ${openId === q.id ? 'text-white' : 'text-gray-400'}`}>
+                        {q.question}
+                    </span>
+                    <ChevronDown 
+                        className={`text-accent transition-transform duration-300 ${openId === q.id ? 'rotate-180' : ''}`} 
+                        size={20} 
+                    />
+                </button>
+                
+                <div 
+                    className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                        openId === q.id ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0'
+                    }`}
+                >
+                    <div className="p-6 pt-0 text-gray-400 leading-relaxed border-t border-gray-800/50 bg-background/30">
+                        <div className="flex gap-3">
+                            <CheckCircle2 size={20} className="text-accent shrink-0 mt-1" />
+                            <p>{q.answer}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        ))}
+    </div>
+  );
+
   return (
     <Section id="interview" className="py-20">
       <div className="max-w-4xl mx-auto">
+        
+        {/* Header 1: Technical */}
         <div className="flex items-center gap-3 mb-10">
             <div className="p-3 bg-surface border border-gray-800 rounded-lg text-accent">
                 <Terminal size={24} />
@@ -71,43 +141,24 @@ const InterviewQA: React.FC = () => {
             </div>
         </div>
 
-        <div className="space-y-4">
-            {questions.map((q) => (
-                <div 
-                    key={q.id} 
-                    className={`bg-surface border rounded-xl overflow-hidden transition-all duration-300 ${
-                        openId === q.id ? 'border-accent shadow-[0_0_20px_rgba(16,185,129,0.1)]' : 'border-gray-800 hover:border-gray-700'
-                    }`}
-                >
-                    <button 
-                        onClick={() => toggle(q.id)}
-                        className="w-full flex items-center justify-between p-6 text-left focus:outline-none"
-                        aria-expanded={openId === q.id}
-                    >
-                        <span className={`font-semibold text-lg transition-colors ${openId === q.id ? 'text-white' : 'text-gray-400'}`}>
-                            {q.question}
-                        </span>
-                        <ChevronDown 
-                            className={`text-accent transition-transform duration-300 ${openId === q.id ? 'rotate-180' : ''}`} 
-                            size={20} 
-                        />
-                    </button>
-                    
-                    <div 
-                        className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                            openId === q.id ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0'
-                        }`}
-                    >
-                        <div className="p-6 pt-0 text-gray-400 leading-relaxed border-t border-gray-800/50 bg-background/30">
-                            <div className="flex gap-3">
-                                <CheckCircle2 size={20} className="text-accent shrink-0 mt-1" />
-                                <p>{q.answer}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            ))}
+        {renderAccordion(techQuestions)}
+
+        {/* Spacer */}
+        <div className="my-16 border-t border-gray-800/50"></div>
+
+        {/* Header 2: Scenario */}
+        <div className="flex items-center gap-3 mb-10">
+            <div className="p-3 bg-surface border border-gray-800 rounded-lg text-orange-500">
+                <Cpu size={24} />
+            </div>
+            <div>
+                <h3 className="text-orange-500 font-medium uppercase tracking-wider text-xs">System Design & Strategy</h3>
+                <h2 className="text-3xl font-bold text-white">Scenario Simulations</h2>
+            </div>
         </div>
+
+        {renderAccordion(scenarioQuestions)}
+
       </div>
     </Section>
   );
