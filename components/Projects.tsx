@@ -51,11 +51,14 @@ const ProjectCard: React.FC<{ project: Project; index: number }> = ({ project, i
     >
       <div className="flex flex-col lg:flex-row h-full">
         {/* Visual Side */}
-        <div className="lg:w-5/12 relative overflow-hidden h-64 lg:h-auto border-b lg:border-b-0 lg:border-r border-gray-800">
+        <div className="lg:w-5/12 relative overflow-hidden h-64 lg:h-auto border-b lg:border-b-0 lg:border-r border-gray-800 bg-surface">
           <div className="absolute inset-0 bg-accent/5 group-hover:bg-transparent transition-colors z-10 mix-blend-overlay" />
           <img 
             src={project.imageUrl} 
-            alt={project.title}
+            alt={`Screenshot of ${project.title} interface`}
+            loading="lazy"
+            width="800"
+            height="600"
             className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out grayscale-[20%] group-hover:grayscale-0"
           />
         </div>
@@ -70,14 +73,14 @@ const ProjectCard: React.FC<{ project: Project; index: number }> = ({ project, i
               <a 
                 href={project.githubUrl} 
                 className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-all" 
-                aria-label="View Code"
+                aria-label={`View ${project.title} source code on GitHub`}
               >
                 <Github size={20} />
               </a>
               <a 
                 href="#" 
                 className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-all" 
-                aria-label="Live Project"
+                aria-label={`View live demo of ${project.title}`}
               >
                 <ExternalLink size={20} />
               </a>
@@ -87,7 +90,7 @@ const ProjectCard: React.FC<{ project: Project; index: number }> = ({ project, i
           <div className="space-y-6 flex-grow">
             {/* Problem */}
             <div className="flex gap-4 items-start">
-              <div className="mt-1 p-1.5 rounded bg-red-500/10 text-red-400 shrink-0">
+              <div className="mt-1 p-1.5 rounded bg-red-500/10 text-red-400 shrink-0" aria-hidden="true">
                 <AlertCircle size={16} />
               </div>
               <div>
@@ -98,7 +101,7 @@ const ProjectCard: React.FC<{ project: Project; index: number }> = ({ project, i
 
             {/* Approach */}
             <div className="flex gap-4 items-start">
-              <div className="mt-1 p-1.5 rounded bg-blue-500/10 text-blue-400 shrink-0">
+              <div className="mt-1 p-1.5 rounded bg-blue-500/10 text-blue-400 shrink-0" aria-hidden="true">
                 <Layers size={16} />
               </div>
               <div>
@@ -110,7 +113,7 @@ const ProjectCard: React.FC<{ project: Project; index: number }> = ({ project, i
             {/* Impact */}
             <div className="relative mt-2 p-5 bg-gradient-to-r from-accent/10 to-transparent rounded-lg border-l-2 border-accent">
               <div className="flex gap-4 items-start">
-                <div className="mt-1 text-accent shrink-0">
+                <div className="mt-1 text-accent shrink-0" aria-hidden="true">
                   <TrendingUp size={20} />
                 </div>
                 <div>
