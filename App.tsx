@@ -8,6 +8,7 @@ import Demo from './components/Demo';
 import SystemArchitecture from './components/SystemArchitecture';
 import Stack from './components/Stack';
 import Blog from './components/Blog';
+import ProfessionalHighlights from './components/ProfessionalHighlights';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import ChatAssistant from './components/ChatAssistant';
@@ -43,6 +44,7 @@ const App: React.FC = () => {
         <SystemArchitecture />
         <Stack />
         <Blog />
+        <ProfessionalHighlights />
         <Contact />
       </main>
 
