@@ -8,6 +8,7 @@ import Stack from './components/Stack';
 import Blog from './components/Blog';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
+import ChatAssistant from './components/ChatAssistant';
 
 const App: React.FC = () => {
   return (
@@ -42,6 +43,7 @@ const App: React.FC = () => {
       </main>
 
       <Footer />
+      <ChatAssistant />
     </div>
   );
 };
