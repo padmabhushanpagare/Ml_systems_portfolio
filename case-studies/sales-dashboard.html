@@ -72,9 +72,31 @@
         mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
       }
       
-      /* Bar Animation */
+      /* --- Reusable Chart System --- */
+      .chart-track {
+        width: 100%;
+        background-color: rgba(31, 41, 55, 0.5); /* gray-800/50 */
+        border-radius: 9999px;
+        overflow: hidden;
+      }
+      
+      .chart-bar {
+        height: 100%;
+        border-radius: 9999px;
+        width: 0;
+        will-change: width;
+      }
+
+      .charts-active .chart-bar {
+        animation: growBar 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      }
+      
+      /* Automatic Staggering */
+      .chart-item:nth-child(1) .chart-bar { animation-delay: 0.1s; }
+      .chart-item:nth-child(2) .chart-bar { animation-delay: 0.2s; }
+      .chart-item:nth-child(3) .chart-bar { animation-delay: 0.3s; }
+
       @keyframes growBar { from { width: 0; } to { width: var(--w); } }
-      .bar-anim { animation: growBar 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
     </style>
 </head>
 <body class="bg-background min-h-screen flex flex-col">
@@ -240,11 +262,11 @@
 
                 <h2>KPI Performance Comparison</h2>
                 <div class="my-10 not-prose">
-                    <div class="bg-surface border border-gray-800 rounded-xl p-8">
+                    <div class="bg-surface border border-gray-800 rounded-xl p-8 chart-wrapper">
                         <div class="space-y-8">
                             
                             <!-- Metric 1: Revenue Tracking Accuracy -->
-                            <div>
+                            <div class="chart-item">
                                 <div class="flex justify-between items-center mb-3">
                                     <h4 class="text-sm font-bold text-gray-200">Revenue Tracking Accuracy</h4>
                                     <span class="text-xs font-mono text-accent bg-accent/10 px-2 py-1 rounded">+17% Improvement</span>
@@ -253,16 +275,16 @@
                                     <!-- Before -->
                                     <div class="flex items-center group">
                                         <div class="w-24 text-[10px] uppercase tracking-wider text-gray-500">Manual</div>
-                                        <div class="flex-1 h-2 bg-gray-800/50 rounded-full mx-3 overflow-hidden">
-                                           <div class="h-full bg-gray-600 rounded-full w-[80%]"></div>
+                                        <div class="flex-1 chart-track h-2 mx-3">
+                                           <div class="chart-bar bg-gray-600 w-[80%]"></div>
                                         </div>
                                         <div class="w-10 text-xs text-gray-500 font-mono text-right">80%</div>
                                     </div>
                                     <!-- After -->
                                     <div class="flex items-center group">
                                         <div class="w-24 text-[10px] uppercase tracking-wider text-white font-medium">Automated</div>
-                                        <div class="flex-1 h-2 bg-gray-800/50 rounded-full mx-3 overflow-hidden">
-                                           <div class="h-full bg-accent rounded-full bar-anim" style="--w: 97%"></div>
+                                        <div class="flex-1 chart-track h-2 mx-3">
+                                           <div class="chart-bar bg-accent" style="--w: 97%"></div>
                                         </div>
                                         <div class="w-10 text-xs text-accent font-bold font-mono text-right">97%</div>
                                     </div>
@@ -270,7 +292,7 @@
                             </div>
 
                             <!-- Metric 2: Decision Speed -->
-                            <div>
+                            <div class="chart-item">
                                 <div class="flex justify-between items-center mb-3">
                                     <h4 class="text-sm font-bold text-gray-200">Decision Speed (Data Availability)</h4>
                                     <span class="text-xs font-mono text-accent bg-accent/10 px-2 py-1 rounded">2 Days &rarr; Real-time</span>
@@ -279,16 +301,16 @@
                                     <!-- Before -->
                                     <div class="flex items-center group">
                                         <div class="w-24 text-[10px] uppercase tracking-wider text-gray-500">Spreadsheets</div>
-                                        <div class="flex-1 h-2 bg-gray-800/50 rounded-full mx-3 overflow-hidden">
-                                           <div class="h-full bg-gray-600 rounded-full w-[15%]"></div>
+                                        <div class="flex-1 chart-track h-2 mx-3">
+                                           <div class="chart-bar bg-gray-600 w-[15%]"></div>
                                         </div>
                                         <div class="w-10 text-xs text-gray-500 font-mono text-right">Low</div>
                                     </div>
                                     <!-- After -->
                                     <div class="flex items-center group">
                                         <div class="w-24 text-[10px] uppercase tracking-wider text-white font-medium">Dashboard</div>
-                                        <div class="flex-1 h-2 bg-gray-800/50 rounded-full mx-3 overflow-hidden">
-                                           <div class="h-full bg-accent rounded-full bar-anim" style="--w: 95%"></div>
+                                        <div class="flex-1 chart-track h-2 mx-3">
+                                           <div class="chart-bar bg-accent" style="--w: 95%"></div>
                                         </div>
                                         <div class="w-10 text-xs text-accent font-bold font-mono text-right">High</div>
                                     </div>
@@ -296,7 +318,7 @@
                             </div>
 
                             <!-- Metric 3: Cross-Department Visibility -->
-                            <div>
+                            <div class="chart-item">
                                 <div class="flex justify-between items-center mb-3">
                                     <h4 class="text-sm font-bold text-gray-200">Cross-Department Visibility</h4>
                                     <span class="text-xs font-mono text-accent bg-accent/10 px-2 py-1 rounded">Unified Source</span>
@@ -305,16 +327,16 @@
                                     <!-- Before -->
                                     <div class="flex items-center group">
                                         <div class="w-24 text-[10px] uppercase tracking-wider text-gray-500">Siloed</div>
-                                        <div class="flex-1 h-2 bg-gray-800/50 rounded-full mx-3 overflow-hidden">
-                                           <div class="h-full bg-gray-600 rounded-full w-[30%]"></div>
+                                        <div class="flex-1 chart-track h-2 mx-3">
+                                           <div class="chart-bar bg-gray-600 w-[30%]"></div>
                                         </div>
                                         <div class="w-10 text-xs text-gray-500 font-mono text-right">Poor</div>
                                     </div>
                                     <!-- After -->
                                     <div class="flex items-center group">
                                         <div class="w-24 text-[10px] uppercase tracking-wider text-white font-medium">Integrated</div>
-                                        <div class="flex-1 h-2 bg-gray-800/50 rounded-full mx-3 overflow-hidden">
-                                           <div class="h-full bg-accent rounded-full bar-anim" style="--w: 90%"></div>
+                                        <div class="flex-1 chart-track h-2 mx-3">
+                                           <div class="chart-bar bg-accent" style="--w: 90%"></div>
                                         </div>
                                         <div class="w-10 text-xs text-accent font-bold font-mono text-right">High</div>
                                     </div>
@@ -362,6 +384,24 @@
     <footer class="py-8 text-center text-gray-600 text-sm border-t border-gray-900 bg-background">
         <p>&copy; <script>document.write(new Date().getFullYear())</script> Alex Chen. All rights reserved.</p>
     </footer>
+
+    <!-- Animation Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('charts-active');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.2 });
+
+            document.querySelectorAll('.chart-wrapper').forEach(section => {
+                observer.observe(section);
+            });
+        });
+    </script>
 
 </body>
 </html>
