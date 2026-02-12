@@ -6,6 +6,7 @@ import Approach from './components/Approach';
 import Projects from './components/Projects';
 import Demo from './components/Demo';
 import SystemArchitecture from './components/SystemArchitecture';
+import InterviewQA from './components/InterviewQA';
 import Stack from './components/Stack';
 import Blog from './components/Blog';
 import ProfessionalHighlights from './components/ProfessionalHighlights';
@@ -61,6 +62,7 @@ const App: React.FC = () => {
         <Projects />
         <Demo />
         <SystemArchitecture />
+        <InterviewQA />
         <Stack />
         <Blog />
         <ProfessionalHighlights />
