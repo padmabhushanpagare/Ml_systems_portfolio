@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Section from './Section';
 import { ChevronDown, Terminal, CheckCircle2, ShieldAlert, Cpu, PenTool } from 'lucide-react';
 
@@ -80,8 +80,23 @@ const scenarioQuestions: Question[] = [
 ];
 
 const InterviewQA: React.FC = () => {
-  const [openId, setOpenId] = useState<number | null>(1);
+  const [openId, setOpenId] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState('core');
+
+  // Listen for ViewMode changes to expand relevant sections
+  useEffect(() => {
+    const handleModeChange = (e: CustomEvent) => {
+      if (e.detail === 'interviewer') {
+        setActiveTab('core');
+        setOpenId(1); // Auto-open first question
+        // Scroll adjustment happens in ViewMode, here we just set state
+      }
+    };
+    
+    // Check initial state from storage if needed, though ViewMode fires event on mount
+    window.addEventListener('viewModeChange', handleModeChange as EventListener);
+    return () => window.removeEventListener('viewModeChange', handleModeChange as EventListener);
+  }, []);
 
   const toggle = (id: number) => {
     setOpenId(openId === id ? null : id);

@@ -60,6 +60,7 @@ const Hero: React.FC = () => {
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </button>
           <button 
+            id="resume-btn"
             onClick={handleDownloadResume}
             className="flex items-center justify-center gap-2 border border-gray-600 text-white font-medium px-8 py-4 rounded-lg hover:border-accent hover:text-accent transition-colors duration-300"
             aria-label="Download Resume"
