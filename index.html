@@ -129,6 +129,18 @@
       .bar-transition {
         transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
       }
+
+      /* Architecture Flow Arrows */
+      @keyframes flowRight {
+        0%, 100% { transform: translateX(0); opacity: 0.3; }
+        50% { transform: translateX(4px); opacity: 1; }
+      }
+      @keyframes flowDown {
+        0%, 100% { transform: translateY(0); opacity: 0.3; }
+        50% { transform: translateY(4px); opacity: 1; }
+      }
+      .animate-flow-x { animation: flowRight 1.5s ease-in-out infinite; }
+      .animate-flow-y { animation: flowDown 1.5s ease-in-out infinite; }
     </style>
   <script type="importmap">
 {

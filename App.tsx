@@ -3,6 +3,7 @@ import Hero from './components/Hero';
 import Approach from './components/Approach';
 import Projects from './components/Projects';
 import Demo from './components/Demo';
+import SystemArchitecture from './components/SystemArchitecture';
 import Stack from './components/Stack';
 import Blog from './components/Blog';
 import Contact from './components/Contact';
@@ -34,6 +35,7 @@ const App: React.FC = () => {
         <Approach />
         <Projects />
         <Demo />
+        <SystemArchitecture />
         <Stack />
         <Blog />
         <Contact />
