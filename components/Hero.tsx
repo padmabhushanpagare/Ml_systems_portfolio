@@ -1,8 +1,10 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { ArrowRight, Download } from 'lucide-react';
+import { useScrollAnimation } from '../hooks/useScrollAnimation';
 
 const Hero: React.FC = () => {
+  const ref = useScrollAnimation(0);
+
   const scrollToProjects = () => {
     const projectsSection = document.getElementById('projects');
     if (projectsSection) {
@@ -12,11 +14,7 @@ const Hero: React.FC = () => {
 
   return (
     <section className="min-h-screen flex flex-col justify-center px-6 md:px-12 max-w-7xl mx-auto pt-20">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
+      <div ref={ref} className="reveal">
         <span className="text-accent font-medium tracking-wider uppercase mb-4 block">
           Portfolio
         </span>
@@ -45,7 +43,7 @@ const Hero: React.FC = () => {
             <Download className="w-5 h-5" />
           </button>
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 };

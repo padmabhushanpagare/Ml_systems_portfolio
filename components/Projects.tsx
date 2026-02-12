@@ -2,6 +2,7 @@ import React from 'react';
 import Section from './Section';
 import { Github, ExternalLink, TrendingUp, AlertCircle, Layers } from 'lucide-react';
 import { Project } from '../types';
+import { useScrollAnimation } from '../hooks/useScrollAnimation';
 
 const projects: Project[] = [
   {
@@ -36,10 +37,115 @@ const projects: Project[] = [
   }
 ];
 
-const Projects: React.FC = () => {
+// Helper component for individual project cards to handle their own observation
+const ProjectCard: React.FC<{ project: Project; index: number }> = ({ project, index }) => {
+  const ref = useScrollAnimation(0.1);
+  
+  // Calculate staggered delay class
+  const delayClass = index === 0 ? '' : index === 1 ? 'delay-200' : 'delay-400';
+
   return (
-    <Section id="projects">
-      <div className="mb-16 md:text-center max-w-3xl mx-auto">
+    <article 
+      ref={ref}
+      className={`reveal ${delayClass} group relative bg-surface rounded-2xl border border-gray-800 overflow-hidden hover:border-gray-700 transition-all duration-300 shadow-lg shadow-black/20`}
+    >
+      <div className="flex flex-col lg:flex-row h-full">
+        {/* Visual Side */}
+        <div className="lg:w-5/12 relative overflow-hidden h-64 lg:h-auto border-b lg:border-b-0 lg:border-r border-gray-800">
+          <div className="absolute inset-0 bg-accent/5 group-hover:bg-transparent transition-colors z-10 mix-blend-overlay" />
+          <img 
+            src={project.imageUrl} 
+            alt={project.title}
+            className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out grayscale-[20%] group-hover:grayscale-0"
+          />
+        </div>
+
+        {/* Content Side */}
+        <div className="lg:w-7/12 p-8 lg:p-10 flex flex-col">
+          <div className="flex justify-between items-start mb-6">
+            <h3 className="text-2xl font-bold text-white group-hover:text-accent transition-colors">
+              {project.title}
+            </h3>
+            <div className="flex gap-3">
+              <a 
+                href={project.githubUrl} 
+                className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-all" 
+                aria-label="View Code"
+              >
+                <Github size={20} />
+              </a>
+              <a 
+                href="#" 
+                className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-all" 
+                aria-label="Live Project"
+              >
+                <ExternalLink size={20} />
+              </a>
+            </div>
+          </div>
+
+          <div className="space-y-6 flex-grow">
+            {/* Problem */}
+            <div className="flex gap-4 items-start">
+              <div className="mt-1 p-1.5 rounded bg-red-500/10 text-red-400 shrink-0">
+                <AlertCircle size={16} />
+              </div>
+              <div>
+                <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">The Challenge</h4>
+                <p className="text-gray-300 text-sm leading-relaxed">{project.problem}</p>
+              </div>
+            </div>
+
+            {/* Approach */}
+            <div className="flex gap-4 items-start">
+              <div className="mt-1 p-1.5 rounded bg-blue-500/10 text-blue-400 shrink-0">
+                <Layers size={16} />
+              </div>
+              <div>
+                <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Technical Approach</h4>
+                <p className="text-gray-300 text-sm leading-relaxed">{project.approach}</p>
+              </div>
+            </div>
+
+            {/* Impact */}
+            <div className="relative mt-2 p-5 bg-gradient-to-r from-accent/10 to-transparent rounded-lg border-l-2 border-accent">
+              <div className="flex gap-4 items-start">
+                <div className="mt-1 text-accent shrink-0">
+                  <TrendingUp size={20} />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-accent uppercase tracking-widest mb-1.5">Business Impact</h4>
+                  <p className="text-white font-medium text-sm leading-relaxed">{project.impact}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Tags */}
+          <div className="mt-8 pt-6 border-t border-gray-800/50">
+            <div className="flex flex-wrap gap-2">
+              {project.tags.map((tag, idx) => (
+                <span 
+                  key={idx} 
+                  className="text-xs font-mono font-medium px-3 py-1.5 rounded bg-background text-gray-400 border border-gray-800"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+  );
+};
+
+const Projects: React.FC = () => {
+  const headerRef = useScrollAnimation();
+
+  return (
+    <Section id="projects" animate={false}>
+      <div ref={headerRef} className="reveal mb-16 md:text-center max-w-3xl mx-auto">
         <h3 className="text-accent font-medium mb-3 uppercase tracking-wider text-sm">Selected Work</h3>
         <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Engineering Business Value</h2>
         <p className="text-gray-400">
@@ -49,99 +155,8 @@ const Projects: React.FC = () => {
       </div>
 
       <div className="flex flex-col gap-16">
-        {projects.map((project) => (
-          <article 
-            key={project.id} 
-            className="group relative bg-surface rounded-2xl border border-gray-800 overflow-hidden hover:border-gray-700 transition-all duration-300 shadow-lg shadow-black/20"
-          >
-            <div className="flex flex-col lg:flex-row h-full">
-              {/* Visual Side */}
-              <div className="lg:w-5/12 relative overflow-hidden h-64 lg:h-auto border-b lg:border-b-0 lg:border-r border-gray-800">
-                <div className="absolute inset-0 bg-accent/5 group-hover:bg-transparent transition-colors z-10 mix-blend-overlay" />
-                <img 
-                  src={project.imageUrl} 
-                  alt={project.title}
-                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out grayscale-[20%] group-hover:grayscale-0"
-                />
-              </div>
-
-              {/* Content Side */}
-              <div className="lg:w-7/12 p-8 lg:p-10 flex flex-col">
-                <div className="flex justify-between items-start mb-6">
-                  <h3 className="text-2xl font-bold text-white group-hover:text-accent transition-colors">
-                    {project.title}
-                  </h3>
-                  <div className="flex gap-3">
-                    <a 
-                      href={project.githubUrl} 
-                      className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-all" 
-                      aria-label="View Code"
-                    >
-                      <Github size={20} />
-                    </a>
-                    <a 
-                      href="#" 
-                      className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-all" 
-                      aria-label="Live Project"
-                    >
-                      <ExternalLink size={20} />
-                    </a>
-                  </div>
-                </div>
-
-                <div className="space-y-6 flex-grow">
-                  {/* Problem */}
-                  <div className="flex gap-4 items-start">
-                    <div className="mt-1 p-1.5 rounded bg-red-500/10 text-red-400 shrink-0">
-                      <AlertCircle size={16} />
-                    </div>
-                    <div>
-                      <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">The Challenge</h4>
-                      <p className="text-gray-300 text-sm leading-relaxed">{project.problem}</p>
-                    </div>
-                  </div>
-
-                  {/* Approach */}
-                  <div className="flex gap-4 items-start">
-                    <div className="mt-1 p-1.5 rounded bg-blue-500/10 text-blue-400 shrink-0">
-                      <Layers size={16} />
-                    </div>
-                    <div>
-                      <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Technical Approach</h4>
-                      <p className="text-gray-300 text-sm leading-relaxed">{project.approach}</p>
-                    </div>
-                  </div>
-
-                  {/* Impact */}
-                  <div className="relative mt-2 p-5 bg-gradient-to-r from-accent/10 to-transparent rounded-lg border-l-2 border-accent">
-                    <div className="flex gap-4 items-start">
-                      <div className="mt-1 text-accent shrink-0">
-                        <TrendingUp size={20} />
-                      </div>
-                      <div>
-                        <h4 className="text-xs font-bold text-accent uppercase tracking-widest mb-1.5">Business Impact</h4>
-                        <p className="text-white font-medium text-sm leading-relaxed">{project.impact}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Tags */}
-                <div className="mt-8 pt-6 border-t border-gray-800/50">
-                  <div className="flex flex-wrap gap-2">
-                    {project.tags.map((tag, idx) => (
-                      <span 
-                        key={idx} 
-                        className="text-xs font-mono font-medium px-3 py-1.5 rounded bg-background text-gray-400 border border-gray-800"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </article>
+        {projects.map((project, index) => (
+          <ProjectCard key={project.id} project={project} index={index} />
         ))}
       </div>
     </Section>
