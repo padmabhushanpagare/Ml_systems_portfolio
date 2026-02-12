@@ -19,10 +19,19 @@ export default async function handler(req, res) {
   }
 
   // Input Validation
-  const { message } = req.body;
+  const { message, history } = req.body;
+  
   if (!message || typeof message !== 'string') {
     return res.status(400).json({ error: 'Valid message string is required' });
   }
+
+  // Parse History (Map frontend 'text' to OpenAI 'content', limit individual msg size)
+  const contextMessages = Array.isArray(history) 
+    ? history.map(msg => ({
+        role: msg.role, 
+        content: typeof msg.text === 'string' ? msg.text.substring(0, 1000) : '' 
+      })) 
+    : [];
 
   // Configuration Check
   const apiKey = process.env.OPENAI_API_KEY;
@@ -48,6 +57,7 @@ export default async function handler(req, res) {
             Your Core Instructions:
             - You are a technical AI assistant representing a Data Scientist portfolio. 
             - Answer professionally, structured, execution-focused, not academic, concise but insightful.
+            - Maintain context from previous messages in the conversation.
             
             Portfolio Context:
             - Alex is a Data Scientist & ML Systems Builder.
@@ -58,6 +68,7 @@ export default async function handler(req, res) {
             - Focus on systems thinking and business value.
             - Be concise. Use bullet points where appropriate.`
           },
+          ...contextMessages,
           { role: 'user', content: message }
         ],
         max_tokens: 300,

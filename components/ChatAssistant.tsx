@@ -26,10 +26,14 @@ const ChatAssistant: React.FC = () => {
   const sendMessage = async (text: string) => {
     if (!text.trim()) return;
     
-    // Add user message
-    setMessages(prev => [...prev, { role: 'user', text: text }]);
+    // Add user message locally
+    const newUserMsg = { role: 'user' as const, text: text };
+    setMessages(prev => [...prev, newUserMsg]);
     setInputValue("");
     setIsTyping(true);
+
+    // Capture recent history (limit to last 5 messages for context window efficiency)
+    const history = messages.slice(-5);
 
     try {
       const response = await fetch('/api/chat', {
@@ -37,7 +41,10 @@ const ChatAssistant: React.FC = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: text }),
+        body: JSON.stringify({ 
+          message: text,
+          history: history 
+        }),
       });
 
       if (!response.ok) {
