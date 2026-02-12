@@ -1,45 +1,82 @@
 import React from 'react';
 import Section from './Section';
-import { Mail, Github, Linkedin, MapPin } from 'lucide-react';
+import { Mail, Github, Linkedin, MapPin, Check } from 'lucide-react';
 
 const Contact: React.FC = () => {
+  const roles = [
+    "Full-time roles",
+    "ML Engineer",
+    "Data Scientist",
+    "AI Systems Development"
+  ];
+
   return (
     <Section id="contact" className="mb-12">
-      <div className="bg-surface rounded-3xl p-8 md:p-16 border border-gray-800 text-center">
-        <h3 className="text-accent font-medium mb-4 uppercase tracking-wider">Get in Touch</h3>
-        <h2 className="text-3xl md:text-5xl font-bold text-white mb-8">Ready to build scalable AI?</h2>
-        <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-12">
-          I am currently open to new opportunities. Whether you have a question about my work or want to discuss a potential collaboration, my inbox is open.
+      <div className="bg-surface rounded-3xl p-8 md:p-16 border border-gray-800 flex flex-col items-center text-center shadow-2xl shadow-black/20">
+        
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 border border-accent/20 text-accent text-xs font-bold uppercase tracking-widest mb-8">
+            <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
+            </span>
+            Available for Hire
+        </div>
+
+        <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 tracking-tight">
+          Open to Data & AI Opportunities
+        </h2>
+        
+        <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
+          I am actively seeking roles where I can design, build, and deploy production-grade ML systems.
         </p>
 
-        <a 
-          href="mailto:hello@alexchen.dev"
-          className="inline-flex items-center gap-2 bg-white text-black font-bold px-8 py-4 rounded-full hover:bg-accent hover:text-white transition-all duration-300 mb-16"
-        >
-          <Mail size={20} />
-          Say Hello
-        </a>
+        {/* Roles List */}
+        <div className="flex flex-wrap justify-center gap-3 mb-12 max-w-2xl">
+            {roles.map((role, idx) => (
+                <div key={idx} className="flex items-center gap-2 bg-background border border-gray-700 px-4 py-2 rounded-lg text-sm text-gray-300">
+                    <Check size={16} className="text-accent" />
+                    <span>{role}</span>
+                </div>
+            ))}
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-sm text-gray-400 border-t border-gray-800 pt-12">
-          <div className="flex flex-col items-center gap-2">
-            <div className="w-10 h-10 rounded-full bg-background flex items-center justify-center text-white mb-2">
-              <MapPin size={18} />
-            </div>
-            <span>San Francisco, CA</span>
+        {/* CTAs */}
+        <div className="flex flex-col sm:flex-row gap-4 mb-16 w-full sm:w-auto">
+            <a 
+            href="mailto:hello@alexchen.dev"
+            className="inline-flex items-center justify-center gap-2 bg-accent text-background font-bold px-8 py-4 rounded-xl hover:bg-accent-hover transition-all duration-300 hover:-translate-y-1 shadow-[0_4px_20px_rgba(16,185,129,0.3)]"
+            >
+            <Mail size={20} />
+            Email Me Directly
+            </a>
+            
+            <a 
+            href="https://linkedin.com/in/alexchen"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 bg-background text-white border border-gray-700 font-medium px-8 py-4 rounded-xl hover:border-accent hover:text-accent transition-all duration-300 hover:-translate-y-1"
+            >
+            <Linkedin size={20} />
+            Connect on LinkedIn
+            </a>
+        </div>
+
+        {/* Footer Links */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-gray-500 border-t border-gray-800/50 pt-10 w-full max-w-4xl">
+          <div className="flex items-center justify-center md:justify-start gap-2">
+            <MapPin size={16} className="text-gray-400" />
+            <span>San Francisco Bay Area</span>
           </div>
-          <div className="flex flex-col items-center gap-2">
-            <div className="w-10 h-10 rounded-full bg-background flex items-center justify-center text-white mb-2">
-              <Github size={18} />
-            </div>
-            <a href="#" className="hover:text-accent transition-colors">github.com/alexchen</a>
+          <div className="flex items-center justify-center gap-2">
+            <Github size={16} className="text-gray-400" />
+            <a href="#" className="hover:text-white transition-colors">github.com/alexchen</a>
           </div>
-          <div className="flex flex-col items-center gap-2">
-            <div className="w-10 h-10 rounded-full bg-background flex items-center justify-center text-white mb-2">
-              <Linkedin size={18} />
-            </div>
-            <a href="#" className="hover:text-accent transition-colors">linkedin.com/in/alexchen</a>
+          <div className="flex items-center justify-center md:justify-end gap-2">
+             <span className="w-2 h-2 rounded-full bg-accent"></span>
+             <span>Open to Relocation</span>
           </div>
         </div>
+
       </div>
     </Section>
   );
