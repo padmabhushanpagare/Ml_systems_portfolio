@@ -57,6 +57,7 @@ const ProjectCard: React.FC<{ project: Project; index: number }> = ({ project, i
             src={project.imageUrl} 
             alt={`Screenshot of ${project.title} interface`}
             loading="lazy"
+            decoding="async"
             width="800"
             height="600"
             className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out grayscale-[20%] group-hover:grayscale-0"

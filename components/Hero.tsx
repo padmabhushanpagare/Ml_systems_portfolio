@@ -1,9 +1,9 @@
 import React from 'react';
 import { ArrowRight, Download } from 'lucide-react';
-import { useScrollAnimation } from '../hooks/useScrollAnimation';
 
 const Hero: React.FC = () => {
-  const ref = useScrollAnimation(0);
+  // Removed useScrollAnimation to improve LCP. 
+  // Hero content uses CSS keyframe animation (.hero-animate) instead of waiting for IntersectionObserver.
 
   const scrollToProjects = () => {
     const projectsSection = document.getElementById('projects');
@@ -14,7 +14,7 @@ const Hero: React.FC = () => {
 
   return (
     <section className="min-h-screen flex flex-col justify-center px-6 md:px-12 max-w-7xl mx-auto pt-20">
-      <div ref={ref} className="reveal">
+      <div className="hero-animate">
         <span className="text-accent font-medium tracking-wider uppercase mb-4 block">
           Portfolio
         </span>
@@ -32,12 +32,14 @@ const Hero: React.FC = () => {
           <button 
             onClick={scrollToProjects}
             className="group flex items-center justify-center gap-2 bg-accent text-background font-semibold px-8 py-4 rounded-lg hover:bg-accent-hover transition-colors duration-300"
+            aria-label="Scroll to Projects section"
           >
             View Projects
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </button>
           <button 
             className="flex items-center justify-center gap-2 border border-gray-600 text-white font-medium px-8 py-4 rounded-lg hover:border-accent hover:text-accent transition-colors duration-300"
+            aria-label="Download Resume"
           >
             Download Resume
             <Download className="w-5 h-5" />

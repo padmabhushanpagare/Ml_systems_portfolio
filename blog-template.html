@@ -10,6 +10,12 @@
     <meta name="author" content="Alex Chen" />
     <link rel="canonical" href="https://alexchen.dev/blog/designing-feature-stores" />
 
+    <!-- Performance: Preload Critical Assets -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="article" />
     <meta property="og:url" content="https://alexchen.dev/blog/designing-feature-stores" />
@@ -29,11 +35,6 @@
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
-
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Structured Data (JSON-LD for BlogPosting) -->
     <script type="application/ld+json">
@@ -108,7 +109,11 @@
       }
     </script>
     <style>
-      body { background-color: #0f0f0f; }
+      body { 
+        background-color: #0f0f0f;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+      }
     </style>
 </head>
 <body class="bg-background text-slate-300 font-sans antialiased selection:bg-accent selection:text-white">
