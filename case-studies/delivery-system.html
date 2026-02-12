@@ -71,6 +71,10 @@
         background-size: 40px 40px;
         mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
       }
+      
+      /* Bar Animation */
+      @keyframes growBar { from { width: 0; } to { width: var(--w); } }
+      .bar-anim { animation: growBar 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
     </style>
 </head>
 <body class="bg-background min-h-screen flex flex-col">
@@ -193,25 +197,59 @@
                     <strong>XGBoost</strong> was the clear winner. It effectively handled the non-linear interactions between weather, time of day, and traffic clusters. We optimized hyperparameters (learning rate, max depth, subsample) using 5-fold cross-validation to prevent overfitting.
                 </p>
 
-                <!-- Visualization Placeholder: Performance Chart -->
-                <figure class="my-10 not-prose">
-                    <div class="bg-surface border border-gray-800 rounded-xl p-6 h-64 flex flex-col items-center justify-center relative overflow-hidden group">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10"></div>
-                        <!-- Simulated Chart Bars -->
-                        <div class="flex items-end gap-8 h-32 w-full max-w-sm px-8 z-0">
-                            <div class="w-1/3 bg-gray-700 h-[40%] rounded-t-md relative group-hover:bg-gray-600 transition-colors">
-                                <span class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs text-gray-400">Baseline</span>
+                <h2>Model Benchmark Comparison</h2>
+                <div class="my-10 not-prose">
+                    <div class="bg-surface border border-gray-800 rounded-xl p-8">
+                        <div class="space-y-8">
+                            
+                            <!-- Baseline -->
+                            <div>
+                                <div class="flex justify-between items-end mb-2">
+                                    <span class="text-gray-400 font-medium text-sm">Baseline: Linear Regression</span>
+                                    <div class="text-xs font-mono text-gray-500">
+                                        MAE: 6.05 <span class="mx-2 text-gray-700">|</span> R²: 0.34
+                                    </div>
+                                </div>
+                                <div class="h-3 w-full bg-gray-800 rounded-full overflow-hidden">
+                                    <div class="h-full bg-gray-600 rounded-full bar-anim" style="--w: 34%"></div>
+                                </div>
                             </div>
-                            <div class="w-1/3 bg-accent/60 h-[75%] rounded-t-md relative group-hover:bg-accent/70 transition-colors">
-                                <span class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs text-accent">RF</span>
+
+                            <!-- Random Forest -->
+                            <div>
+                                <div class="flex justify-between items-end mb-2">
+                                    <span class="text-gray-300 font-medium text-sm">Random Forest</span>
+                                    <div class="text-xs font-mono text-gray-400">
+                                        MAE: 4.84 <span class="mx-2 text-gray-700">|</span> R²: 0.60
+                                    </div>
+                                </div>
+                                <div class="h-3 w-full bg-gray-800 rounded-full overflow-hidden">
+                                    <div class="h-full bg-emerald-500/50 rounded-full bar-anim" style="--w: 60%"></div>
+                                </div>
                             </div>
-                            <div class="w-1/3 bg-accent h-[90%] rounded-t-md relative group-hover:bg-accent-hover transition-colors shadow-[0_0_15px_rgba(16,185,129,0.3)]">
-                                <span class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs text-white font-bold">XGBoost</span>
+
+                            <!-- Final -->
+                            <div>
+                                <div class="flex justify-between items-end mb-2">
+                                    <span class="text-white font-bold text-sm flex items-center gap-2">
+                                        Gradient Boosting (Final)
+                                        <span class="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 text-[10px] uppercase tracking-wider">Optimized</span>
+                                    </span>
+                                    <div class="text-xs font-mono text-emerald-500 font-bold">
+                                        MAE: 4.44 <span class="mx-2 text-gray-700">|</span> R²: 0.63
+                                    </div>
+                                </div>
+                                <div class="h-4 w-full bg-gray-800 rounded-full overflow-hidden relative shadow-[0_0_15px_rgba(16,185,129,0.1)]">
+                                    <div class="h-full bg-gradient-to-r from-emerald-600 to-emerald-400 rounded-full bar-anim relative z-10" style="--w: 63%"></div>
+                                </div>
                             </div>
+
                         </div>
-                        <p class="mt-4 text-sm text-gray-500 font-mono">Model Improvement (R² Score)</p>
                     </div>
-                </figure>
+                    <p class="mt-6 text-sm text-gray-400 italic leading-relaxed pl-4 border-l-2 border-gray-800">
+                        The progression from a simple linear baseline to XGBoost highlights the non-linear nature of traffic patterns. While Random Forest provided a significant jump in accuracy (R² 0.34 → 0.60), the Gradient Boosting model offered the final edge in precision (MAE 4.44 min) and optimized inference speed, making it the viable choice for production scaling.
+                    </p>
+                </div>
 
                 <h2>Results & Business Impact</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 my-8 not-prose">
