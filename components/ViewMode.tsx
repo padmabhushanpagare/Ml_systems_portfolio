@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Eye, ChevronDown, Check, Info } from 'lucide-react';
+import { Eye, ChevronDown, Check, Info, X } from 'lucide-react';
 
 type Persona = 'default' | 'recruiter' | 'manager' | 'interviewer' | 'founder';
 
@@ -27,7 +27,7 @@ const CONFIG: Record<Persona, PersonaConfig> = {
     focus: ['snapshot', 'highlights', 'contact', 'hero'],
     dim: ['architecture', 'interview', 'demo', 'blog', 'stack'],
     priorityId: 'hero',
-    bannerText: 'Optimized for Talent Acquisition: Focusing on experience snapshot, key highlights, and contact info.'
+    bannerText: 'This view prioritizes hiring signals and resume access.'
   },
   manager: {
     label: 'Hiring Manager',
@@ -35,7 +35,7 @@ const CONFIG: Record<Persona, PersonaConfig> = {
     focus: ['projects', 'approach', 'blog', 'highlights'],
     dim: ['stack', 'interview', 'demo', 'contact'],
     priorityId: 'projects',
-    bannerText: 'Optimized for Leadership: Highlighting project business impact, engineering methodology, and case studies.'
+    bannerText: 'This view highlights project impact and engineering methodology.'
   },
   interviewer: {
     label: 'Tech Interviewer',
@@ -43,7 +43,7 @@ const CONFIG: Record<Persona, PersonaConfig> = {
     focus: ['architecture', 'interview', 'stack', 'demo'],
     dim: ['why-hire-me', 'highlights', 'hero', 'snapshot', 'blog'],
     priorityId: 'interview',
-    bannerText: 'Optimized for Technical Review: Focusing on system architecture, technical Q&A, and stack proficiency.'
+    bannerText: 'This view highlights modeling depth and system design reasoning.'
   },
   founder: {
     label: 'Founder / VC',
@@ -51,12 +51,14 @@ const CONFIG: Record<Persona, PersonaConfig> = {
     focus: ['why-hire-me', 'demo', 'projects', 'contact', 'architecture', 'chat-assistant'],
     dim: ['interview', 'stack', 'blog'],
     priorityId: 'why-hire-me',
-    bannerText: 'Optimized for Business Value: Focusing on ROI, interactive demos, and "Why Hire Me" propositions.'
+    bannerText: 'This view emphasizes product thinking and scalability.'
   }
 };
 
 const ViewMode: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isBannerVisible, setIsBannerVisible] = useState(false);
+  
   // Initialize from localStorage or default
   const [activeMode, setActiveMode] = useState<Persona>(() => {
     if (typeof window !== 'undefined') {
@@ -81,7 +83,13 @@ const ViewMode: React.FC = () => {
       (el as HTMLElement).style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
     });
 
-    if (activeMode === 'default') return;
+    if (activeMode === 'default') {
+        setIsBannerVisible(false);
+        return;
+    }
+
+    // Show banner on new mode activation
+    setIsBannerVisible(true);
 
     // 4. Apply Dimming
     config.dim.forEach(id => {
@@ -164,18 +172,23 @@ const ViewMode: React.FC = () => {
         `}
       </style>
 
-      {/* Contextual Banner */}
-      {activeMode !== 'default' && (
+      {/* Dynamic Contextual Banner */}
+      {activeMode !== 'default' && isBannerVisible && (
         <div className="fixed top-20 md:top-24 left-0 right-0 z-40 flex justify-center pointer-events-none animate-slide-up">
-          <div className="bg-surface/95 backdrop-blur-md border border-accent/40 text-white text-xs md:text-sm py-2 px-6 rounded-full shadow-[0_0_20px_rgba(0,0,0,0.5)] flex items-center gap-2 pointer-events-auto transition-all">
-            <Info size={16} className="text-accent" />
-            <span className="font-medium tracking-wide">{CONFIG[activeMode].bannerText}</span>
+          <div className="bg-surface/95 backdrop-blur-md border border-accent/40 text-white text-xs md:text-sm py-2 pl-5 pr-2 rounded-full shadow-[0_0_20px_rgba(0,0,0,0.5)] flex items-center gap-4 pointer-events-auto transition-all">
+            <div className="flex items-center gap-2">
+                <Info size={16} className="text-accent shrink-0" />
+                <span className="font-medium tracking-wide">{CONFIG[activeMode].bannerText}</span>
+            </div>
+            
+            <div className="h-4 w-[1px] bg-gray-700"></div>
+
             <button 
-              onClick={() => setActiveMode('default')} 
-              className="ml-3 px-2 py-0.5 bg-gray-800 rounded text-gray-300 hover:text-white hover:bg-gray-700 transition-colors text-xs uppercase font-bold"
-              aria-label="Clear View Mode"
+              onClick={() => setIsBannerVisible(false)} 
+              className="p-1 hover:bg-white/10 rounded-full text-gray-400 hover:text-white transition-colors"
+              aria-label="Dismiss Banner"
             >
-              Reset
+              <X size={14} />
             </button>
           </div>
         </div>
