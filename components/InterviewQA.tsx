@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Section from './Section';
-import { ChevronDown, Terminal, CheckCircle2, ShieldAlert, Cpu } from 'lucide-react';
+import { ChevronDown, Terminal, CheckCircle2, ShieldAlert, Cpu, PenTool } from 'lucide-react';
 
 interface Question {
   id: number;
@@ -158,6 +158,104 @@ const InterviewQA: React.FC = () => {
         </div>
 
         {renderAccordion(scenarioQuestions)}
+
+        {/* Spacer */}
+        <div className="my-16 border-t border-gray-800/50"></div>
+
+        {/* Header 3: Whiteboard */}
+        <div className="flex items-center gap-3 mb-10">
+            <div className="p-3 bg-surface border border-gray-800 rounded-lg text-purple-400">
+                <PenTool size={24} />
+            </div>
+            <div>
+                <h3 className="text-purple-400 font-medium uppercase tracking-wider text-xs">System Design</h3>
+                <h2 className="text-3xl font-bold text-white">Whiteboard Thinking</h2>
+            </div>
+        </div>
+
+        {/* Whiteboard Content Card */}
+        <div className="bg-surface/30 border border-gray-800 rounded-2xl p-8 relative overflow-hidden backdrop-blur-sm shadow-xl">
+            <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
+                <PenTool size={180} />
+            </div>
+            
+            <h3 className="text-xl font-bold text-white mb-8 border-b border-gray-700/50 pb-4 inline-block">
+                Example: Delivery Time Optimization
+            </h3>
+
+            <div className="space-y-10 relative">
+                {/* Connector Line */}
+                <div className="absolute left-4 top-2 bottom-2 w-0.5 bg-gradient-to-b from-purple-500/50 to-transparent"></div>
+
+                {/* Step 1 */}
+                <div className="relative pl-12">
+                    <div className="absolute left-0 top-0 w-8 h-8 rounded-full bg-purple-500/10 text-purple-400 flex items-center justify-center font-bold text-sm border border-purple-500/30 z-10 shadow-[0_0_10px_rgba(168,85,247,0.2)]">1</div>
+                    <div className="group">
+                        <h4 className="text-white font-bold mb-2 group-hover:text-purple-400 transition-colors">Problem Restatement</h4>
+                        <p className="text-gray-400 text-sm leading-relaxed">
+                            <strong>Objective:</strong> Predict delivery duration (minutes) at checkout. <br/>
+                            <strong>Business Goal:</strong> Reduce late orders by 20% to improve retention. <br/>
+                            <strong>SLA:</strong> Inference &lt; 50ms; 99.9% Availability.
+                        </p>
+                    </div>
+                </div>
+
+                {/* Step 2 */}
+                <div className="relative pl-12">
+                    <div className="absolute left-0 top-0 w-8 h-8 rounded-full bg-purple-500/10 text-purple-400 flex items-center justify-center font-bold text-sm border border-purple-500/30 z-10 shadow-[0_0_10px_rgba(168,85,247,0.2)]">2</div>
+                    <div className="group">
+                        <h4 className="text-white font-bold mb-2 group-hover:text-purple-400 transition-colors">Data Strategy</h4>
+                        <p className="text-gray-400 text-sm leading-relaxed">
+                            <strong>Training Data:</strong> 12 months of historical logs (Order Placed &rarr; Delivered). <br/>
+                            <strong>Outliers:</strong> Filter trips &gt; 3 hrs (system errors) or &lt; 2 mins (cancellations). <br/>
+                            <strong>Seasonality:</strong> Partition data by city; account for holidays/events.
+                        </p>
+                    </div>
+                </div>
+
+                {/* Step 3 */}
+                <div className="relative pl-12">
+                    <div className="absolute left-0 top-0 w-8 h-8 rounded-full bg-purple-500/10 text-purple-400 flex items-center justify-center font-bold text-sm border border-purple-500/30 z-10 shadow-[0_0_10px_rgba(168,85,247,0.2)]">3</div>
+                    <div className="group">
+                        <h4 className="text-white font-bold mb-2 group-hover:text-purple-400 transition-colors">Feature Engineering</h4>
+                        <ul className="text-gray-400 text-sm space-y-1 list-disc list-inside">
+                            <li><strong>Spatial:</strong> S2 Cell ID, Pickup/Dropoff Cluster (K-Means), Haversine Distance.</li>
+                            <li><strong>Temporal:</strong> Hour-of-Day (Sin/Cos), Day-of-Week, Is_Rush_Hour.</li>
+                            <li><strong>Real-time:</strong> Restaurant Queue Depth (Redis), Weather API (Rain/Snow).</li>
+                        </ul>
+                    </div>
+                </div>
+
+                {/* Step 4 */}
+                <div className="relative pl-12">
+                    <div className="absolute left-0 top-0 w-8 h-8 rounded-full bg-purple-500/10 text-purple-400 flex items-center justify-center font-bold text-sm border border-purple-500/30 z-10 shadow-[0_0_10px_rgba(168,85,247,0.2)]">4</div>
+                    <div className="group">
+                        <h4 className="text-white font-bold mb-2 group-hover:text-purple-400 transition-colors">Model Selection</h4>
+                        <p className="text-gray-400 text-sm leading-relaxed">
+                            <strong>Algorithm:</strong> Gradient Boosted Decision Trees (XGBoost/LightGBM).<br/>
+                            <strong>Why?</strong> Superior handling of tabular data and non-linear feature interactions (e.g., Rain + Friday Night) compared to linear models. Faster inference/training than Deep Learning for this feature size.
+                        </p>
+                    </div>
+                </div>
+
+                {/* Step 5 */}
+                <div className="relative pl-12">
+                    <div className="absolute left-0 top-0 w-8 h-8 rounded-full bg-purple-500/10 text-purple-400 flex items-center justify-center font-bold text-sm border border-purple-500/30 z-10 shadow-[0_0_10px_rgba(168,85,247,0.2)]">5</div>
+                    <div className="group">
+                        <h4 className="text-white font-bold mb-2 group-hover:text-purple-400 transition-colors">Evaluation & Deployment</h4>
+                        <p className="text-gray-400 text-sm leading-relaxed mb-3">
+                            <strong>Offline Eval:</strong> RMSE & MAE on time-based split (Train: Jan-Mar, Test: Apr). <br/>
+                            <strong>Online Eval:</strong> A/B Test (Variant B: New Model). Metric: Customer Support Ticket Rate.<br/>
+                            <strong>Serving:</strong> ONNX Runtime wrapped in FastAPI. Autoscaling on K8s. Feature store (Redis) for &lt;5ms feature retrieval.
+                        </p>
+                        <div className="inline-block px-3 py-1.5 rounded bg-gray-900 border border-gray-700 font-mono text-xs text-purple-300">
+                             Architecture: Client &rarr; API GW &rarr; Feature Store Lookups &rarr; Model &rarr; Response
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
 
       </div>
     </Section>
