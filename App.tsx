@@ -5,6 +5,7 @@ import QuickEvaluation from './components/QuickEvaluation';
 import Approach from './components/Approach';
 import Projects from './components/Projects';
 import Demo from './components/Demo';
+import AISystemsLab from './components/AISystemsLab';
 import SystemArchitecture from './components/SystemArchitecture';
 import InterviewQA from './components/InterviewQA';
 import Stack from './components/Stack';
@@ -85,6 +86,7 @@ const App: React.FC = () => {
         <Projects />
         <Demo />
         <SystemArchitecture />
+        <AISystemsLab />
         <InterviewQA />
         <Stack />
         <Blog />
