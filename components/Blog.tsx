@@ -10,7 +10,7 @@ const posts: BlogPost[] = [
     excerpt: "A deep dive into reducing training-serving skew using Feast and Redis in high-throughput environments.",
     date: "Oct 12, 2023",
     readTime: "8 min read",
-    url: "#"
+    url: "/blog-template.html" // Linked to template for demo purposes
   },
   {
     id: 2,
@@ -18,7 +18,7 @@ const posts: BlogPost[] = [
     excerpt: "Why you should stop pickling models and start versioning your data and pipelines.",
     date: "Sep 28, 2023",
     readTime: "6 min read",
-    url: "#"
+    url: "/blog-template.html"
   },
   {
     id: 3,
@@ -26,7 +26,7 @@ const posts: BlogPost[] = [
     excerpt: "Benchmarking standard PyTorch vs ONNX Runtime vs TensorRT for BERT-large models.",
     date: "Aug 15, 2023",
     readTime: "12 min read",
-    url: "#"
+    url: "/blog-template.html"
   }
 ];
 

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Post Title | Alex Chen</title>
+    <meta name="description" content="Technical article on ML Systems">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS with Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: { sans: ['Inter', 'sans-serif'] },
+            colors: {
+              background: '#0f0f0f',
+              surface: '#1a1a1a',
+              accent: '#10b981', // emerald-500
+              'accent-hover': '#059669', // emerald-600
+            },
+            typography: (theme) => ({
+              DEFAULT: {
+                css: {
+                  color: '#9ca3af', // gray-400
+                  '--tw-prose-headings': '#ffffff',
+                  '--tw-prose-body': '#9ca3af',
+                  '--tw-prose-links': '#10b981',
+                  '--tw-prose-code': '#10b981',
+                  '--tw-prose-bold': '#ffffff',
+                  '--tw-prose-quotes': '#e2e8f0',
+                  '--tw-prose-hr': '#374151',
+                  maxWidth: 'none',
+                  h1: { fontWeight: '700' },
+                  h2: { marginTop: '2em' },
+                  code: { 
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)', 
+                    padding: '0.2em 0.4em', 
+                    borderRadius: '0.25rem',
+                    fontWeight: '400'
+                  },
+                  'code::before': { content: '""' },
+                  'code::after': { content: '""' },
+                }
+              }
+            })
+          }
+        }
+      }
+    </script>
+    <style>
+      body { background-color: #0f0f0f; }
+    </style>
+</head>
+<body class="bg-background text-slate-300 font-sans antialiased selection:bg-accent selection:text-white">
+
+    <!-- Navigation (Static Version of React Nav) -->
+    <nav class="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-background/80 border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-6 md:px-12 py-4 flex justify-between items-center">
+            <a href="/" class="text-white font-bold text-xl tracking-tight group">
+                AC<span class="text-accent group-hover:text-accent-hover transition-colors">.</span>
+            </a>
+            <a href="/" class="text-sm font-medium text-gray-400 hover:text-white transition-colors flex items-center gap-2 group">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:-translate-x-1 transition-transform"><path d="m15 18-6-6 6-6"/></svg>
+                Back to Portfolio
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-32 pb-24 px-6 md:px-12">
+        <article class="max-w-3xl mx-auto">
+            
+            <!-- Post Header -->
+            <header class="mb-12 border-b border-gray-800 pb-12">
+                <div class="flex items-center gap-4 text-sm font-mono text-accent mb-6">
+                    <time datetime="2023-10-12">Oct 12, 2023</time>
+                    <span class="text-gray-600">•</span>
+                    <span>8 min read</span>
+                    <span class="text-gray-600">•</span>
+                    <span class="text-gray-400">ML Systems</span>
+                </div>
+                <h1 class="text-3xl md:text-5xl font-bold text-white mb-6 leading-tight">
+                    Designing Feature Stores for Real-time Inference
+                </h1>
+                <p class="text-xl text-gray-400 leading-relaxed">
+                    A deep dive into reducing training-serving skew using Feast and Redis in high-throughput environments.
+                </p>
+            </header>
+
+            <!-- Post Body (Markdown Content Area) -->
+            <div class="prose prose-invert prose-lg prose-emerald">
+                <p>
+                    Machine learning models are only as good as the data they are fed. In production, ensuring that the features served at inference time match those used during training is a critical challenge known as <strong>training-serving skew</strong>.
+                </p>
+                
+                <h2>The Problem with Batch Pipelines</h2>
+                <p>
+                    Traditionally, data teams build batch pipelines that compute features once a day. While this works for analytical dashboards, it fails for real-time fraud detection or recommendation systems where user behavior changes by the second.
+                </p>
+
+                <h3>Key Requirements</h3>
+                <ul>
+                    <li><strong>Low Latency:</strong> Inference feature retrieval must be under 10ms.</li>
+                    <li><strong>Consistency:</strong> Point-in-time correctness for generating training datasets.</li>
+                    <li><strong>Scalability:</strong> Handling thousands of requests per second (QPS).</li>
+                </ul>
+
+                <h2>Enter the Feature Store</h2>
+                <p>
+                    We implemented <a href="#">Feast</a> (Feature Store) to bridge this gap. By using <strong>Redis</strong> for online serving and <strong>BigQuery</strong> for offline storage, we achieved a unified interface for data access.
+                </p>
+
+                <pre><code class="language-python"># Example Feast definition
+from feast import Entity, Feature, FeatureView, ValueType
+
+driver = Entity(name="driver_id", value_type=ValueType.INT64)
+
+driver_stats_view = FeatureView(
+    name="driver_stats",
+    entities=["driver_id"],
+    ttl=timedelta(seconds=86400 * 1),
+    features=[
+        Feature(name="conv_rate", dtype=ValueType.FLOAT),
+        Feature(name="acc_rate", dtype=ValueType.FLOAT),
+    ],
+    online=True,
+    batch_source=driver_stats_source,
+    tags={"team": "recommendations"},
+)</code></pre>
+
+                <h2>Results & Impact</h2>
+                <p>
+                    This architecture reduced feature drift by 90% and allowed data scientists to push new features to production in hours instead of weeks. The system now handles 5000 QPS with p99 latency &lt; 8ms.
+                </p>
+
+                <hr />
+
+                <p class="text-sm text-gray-500 italic">
+                    Disclaimer: The code snippets above are simplified for demonstration purposes.
+                </p>
+            </div>
+
+            <!-- Author / CTA -->
+            <div class="mt-16 pt-12 border-t border-gray-800 flex items-center justify-between flex-wrap gap-4">
+                <div>
+                    <h3 class="text-white font-bold text-lg mb-1">Alex Chen</h3>
+                    <p class="text-gray-400 text-sm">Data Scientist | ML Systems Builder</p>
+                </div>
+                <a href="/#contact" class="text-accent hover:text-white transition-colors text-sm font-medium flex items-center gap-1">
+                    Let's discuss this <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                </a>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 text-center text-gray-600 text-sm border-t border-gray-900 bg-background">
+        <p>&copy; 2024 Alex Chen. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
