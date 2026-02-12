@@ -8,6 +8,7 @@ export interface Project {
   impact: string;
   tags: string[];
   githubUrl: string;
+  caseStudyUrl: string;
   imageUrl: string;
 }
 

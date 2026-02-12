@@ -1,38 +1,41 @@
 import React from 'react';
 import Section from './Section';
-import { Github, ExternalLink, TrendingUp, AlertCircle, Layers } from 'lucide-react';
+import { TrendingUp, AlertCircle, Layers, ArrowRight } from 'lucide-react';
 import { Project } from '../types';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
 
 const projects: Project[] = [
   {
     id: 1,
-    title: "Predictive Maintenance System",
-    problem: "Unplanned downtime in manufacturing lines costing $50k/hour, with false positive alerts causing alert fatigue.",
-    approach: "Architected LSTM-based anomaly detection on high-frequency sensor data. Implemented drift monitoring via EvidentlyAI and deployed on K8s.",
-    impact: "Reduced downtime by 35% ($2M/year savings) and decreased false alarm rate by 60%, restoring operator trust.",
-    tags: ["Python", "TensorFlow", "Kubernetes", "FastAPI", "EvidentlyAI"],
+    title: "Delivery Time Prediction Engine",
+    problem: "Inaccurate ETAs leading to customer churn and high support ticket volume.",
+    approach: "Built a real-time XGBoost regression pipeline with geospatial clustering and Redis feature store.",
+    impact: "Reduced MAE by 45% (4.44 mins) and support tickets by 40%. Achieved <50ms P99 latency.",
+    tags: ["Python", "XGBoost", "Redis", "FastAPI"],
     githubUrl: "#",
+    caseStudyUrl: "case-studies/delivery-system.html",
     imageUrl: "https://picsum.photos/800/600?random=1"
   },
   {
     id: 2,
-    title: "Real-time Recommendation Engine",
-    problem: "Static rule-based sorting resulted in low engagement and 2.5% conversion rate on the discovery feed.",
-    approach: "Designed a two-tower retrieval/ranking system with TFX. Built a low-latency inference service (<50ms p99) using Redis feature store.",
-    impact: "Boosted CTR by 12% and GMV by 8% in A/B tests. Scaled to handle 5k QPS with 99.9% availability.",
-    tags: ["PyTorch", "Redis", "TFX", "BigQuery", "Go"],
+    title: "Market Crash Early Warning System",
+    problem: "Capital loss during 'Black Swan' events due to asset correlation breakdown.",
+    approach: "Developed an ensemble of LSTM Autoencoders and Isolation Forests to detect systemic anomalies.",
+    impact: "Successfully signaled 2008/2020 crashes in backtests; reduced max drawdown by 35%.",
+    tags: ["TensorFlow", "LSTM", "Scikit-Learn", "Airflow"],
     githubUrl: "#",
+    caseStudyUrl: "case-studies/stock-crash.html",
     imageUrl: "https://picsum.photos/800/600?random=2"
   },
   {
     id: 3,
-    title: "Legal Document Intelligence",
-    problem: "Manual contract review was a bottleneck, consuming 40+ hours/week of senior counsel time for routine compliance checks.",
-    approach: "Fine-tuned RoBERTa for NER and clause classification. Developed a human-in-the-loop active learning loop to improve model performance over time.",
-    impact: "Automated 85% of initial review, reducing manual effort to 5 hours/week. Achieved 94% F1-score on critical risk clauses.",
-    tags: ["HuggingFace", "NLP", "Docker", "PostgreSQL", "React"],
+    title: "Enterprise Sales Intelligence",
+    problem: "Fragmented data across CRM (Salesforce) and ERP (NetSuite) causing manual reporting overhead.",
+    approach: "Architected a centralized data warehouse using Snowflake, dbt transformations, and Tableau.",
+    impact: "Improved forecast accuracy by 15% and saved 20+ hours/week of manual spreadsheet work.",
+    tags: ["Snowflake", "dbt", "Tableau", "SQL"],
     githubUrl: "#",
+    caseStudyUrl: "case-studies/sales-dashboard.html",
     imageUrl: "https://picsum.photos/800/600?random=3"
   }
 ];
@@ -70,22 +73,13 @@ const ProjectCard: React.FC<{ project: Project; index: number }> = ({ project, i
             <h3 className="text-2xl font-bold text-white group-hover:text-accent transition-colors">
               {project.title}
             </h3>
-            <div className="flex gap-3">
-              <a 
-                href={project.githubUrl} 
-                className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-all" 
-                aria-label={`View ${project.title} source code on GitHub`}
-              >
-                <Github size={20} />
-              </a>
-              <a 
-                href="#" 
-                className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-all" 
-                aria-label={`View live demo of ${project.title}`}
-              >
-                <ExternalLink size={20} />
-              </a>
-            </div>
+            
+            <a 
+              href={project.caseStudyUrl}
+              className="inline-flex items-center gap-2 text-sm font-bold text-accent hover:text-white transition-colors border border-accent/20 bg-accent/5 px-4 py-2 rounded-full hover:bg-accent/10 whitespace-nowrap"
+            >
+              View Case Study <ArrowRight size={16} />
+            </a>
           </div>
 
           <div className="space-y-6 flex-grow">
