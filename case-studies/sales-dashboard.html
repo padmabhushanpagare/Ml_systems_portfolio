@@ -71,6 +71,10 @@
         background-size: 40px 40px;
         mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
       }
+      
+      /* Bar Animation */
+      @keyframes growBar { from { width: 0; } to { width: var(--w); } }
+      .bar-anim { animation: growBar 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
     </style>
 </head>
 <body class="bg-background min-h-screen flex flex-col">
@@ -233,6 +237,96 @@
                     <li><strong>Lead Source Quality:</strong> "Paid Social" leads had high volume but a <1% win rate compared to "Webinar" leads (8%).
                     <br><em>Decision:</em> Marketing reallocated $50k/quarter from Social to Webinar production.</li>
                 </ol>
+
+                <h2>KPI Performance Comparison</h2>
+                <div class="my-10 not-prose">
+                    <div class="bg-surface border border-gray-800 rounded-xl p-8">
+                        <div class="space-y-8">
+                            
+                            <!-- Metric 1: Revenue Tracking Accuracy -->
+                            <div>
+                                <div class="flex justify-between items-center mb-3">
+                                    <h4 class="text-sm font-bold text-gray-200">Revenue Tracking Accuracy</h4>
+                                    <span class="text-xs font-mono text-accent bg-accent/10 px-2 py-1 rounded">+17% Improvement</span>
+                                </div>
+                                <div class="space-y-2">
+                                    <!-- Before -->
+                                    <div class="flex items-center group">
+                                        <div class="w-24 text-[10px] uppercase tracking-wider text-gray-500">Manual</div>
+                                        <div class="flex-1 h-2 bg-gray-800/50 rounded-full mx-3 overflow-hidden">
+                                           <div class="h-full bg-gray-600 rounded-full w-[80%]"></div>
+                                        </div>
+                                        <div class="w-10 text-xs text-gray-500 font-mono text-right">80%</div>
+                                    </div>
+                                    <!-- After -->
+                                    <div class="flex items-center group">
+                                        <div class="w-24 text-[10px] uppercase tracking-wider text-white font-medium">Automated</div>
+                                        <div class="flex-1 h-2 bg-gray-800/50 rounded-full mx-3 overflow-hidden">
+                                           <div class="h-full bg-accent rounded-full bar-anim" style="--w: 97%"></div>
+                                        </div>
+                                        <div class="w-10 text-xs text-accent font-bold font-mono text-right">97%</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Metric 2: Decision Speed -->
+                            <div>
+                                <div class="flex justify-between items-center mb-3">
+                                    <h4 class="text-sm font-bold text-gray-200">Decision Speed (Data Availability)</h4>
+                                    <span class="text-xs font-mono text-accent bg-accent/10 px-2 py-1 rounded">2 Days &rarr; Real-time</span>
+                                </div>
+                                <div class="space-y-2">
+                                    <!-- Before -->
+                                    <div class="flex items-center group">
+                                        <div class="w-24 text-[10px] uppercase tracking-wider text-gray-500">Spreadsheets</div>
+                                        <div class="flex-1 h-2 bg-gray-800/50 rounded-full mx-3 overflow-hidden">
+                                           <div class="h-full bg-gray-600 rounded-full w-[15%]"></div>
+                                        </div>
+                                        <div class="w-10 text-xs text-gray-500 font-mono text-right">Low</div>
+                                    </div>
+                                    <!-- After -->
+                                    <div class="flex items-center group">
+                                        <div class="w-24 text-[10px] uppercase tracking-wider text-white font-medium">Dashboard</div>
+                                        <div class="flex-1 h-2 bg-gray-800/50 rounded-full mx-3 overflow-hidden">
+                                           <div class="h-full bg-accent rounded-full bar-anim" style="--w: 95%"></div>
+                                        </div>
+                                        <div class="w-10 text-xs text-accent font-bold font-mono text-right">High</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Metric 3: Cross-Department Visibility -->
+                            <div>
+                                <div class="flex justify-between items-center mb-3">
+                                    <h4 class="text-sm font-bold text-gray-200">Cross-Department Visibility</h4>
+                                    <span class="text-xs font-mono text-accent bg-accent/10 px-2 py-1 rounded">Unified Source</span>
+                                </div>
+                                <div class="space-y-2">
+                                    <!-- Before -->
+                                    <div class="flex items-center group">
+                                        <div class="w-24 text-[10px] uppercase tracking-wider text-gray-500">Siloed</div>
+                                        <div class="flex-1 h-2 bg-gray-800/50 rounded-full mx-3 overflow-hidden">
+                                           <div class="h-full bg-gray-600 rounded-full w-[30%]"></div>
+                                        </div>
+                                        <div class="w-10 text-xs text-gray-500 font-mono text-right">Poor</div>
+                                    </div>
+                                    <!-- After -->
+                                    <div class="flex items-center group">
+                                        <div class="w-24 text-[10px] uppercase tracking-wider text-white font-medium">Integrated</div>
+                                        <div class="flex-1 h-2 bg-gray-800/50 rounded-full mx-3 overflow-hidden">
+                                           <div class="h-full bg-accent rounded-full bar-anim" style="--w: 90%"></div>
+                                        </div>
+                                        <div class="w-10 text-xs text-accent font-bold font-mono text-right">High</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <p class="mt-6 text-sm text-gray-400 italic leading-relaxed pl-4 border-l-2 border-gray-800">
+                        <strong>Impact Analysis:</strong> The shift from manual Excel merging to an automated Snowflake+dbt pipeline didn't just save time; it fundamentally changed <em>how</em> decisions were made. By trusting the real-time "Decision Speed", executives could pivot marketing spend mid-quarter rather than waiting for post-mortem analysis.
+                    </p>
+                </div>
 
                 <h2>Results & ROI</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 my-8 not-prose">
