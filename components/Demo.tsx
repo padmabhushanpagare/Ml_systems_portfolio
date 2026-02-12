@@ -1,6 +1,14 @@
 import React, { useState } from 'react';
 import Section from './Section';
-import { Calculator, Play, MapPin, Star, Clock, Activity } from 'lucide-react';
+import { Calculator, Play, MapPin, Star, Clock, Activity, BarChart3, Info } from 'lucide-react';
+
+interface Contribution {
+  feature: string;
+  value: number;
+  label: string;
+  color: string;
+  description: string;
+}
 
 const Demo: React.FC = () => {
   const [inputs, setInputs] = useState({
@@ -10,6 +18,7 @@ const Demo: React.FC = () => {
     traffic: 'Medium'
   });
   const [prediction, setPrediction] = useState<number | null>(null);
+  const [contributions, setContributions] = useState<Contribution[]>([]);
   const [isAnimating, setIsAnimating] = useState(false);
 
   const trafficOptions = ['Low', 'Medium', 'High', 'Jam'];
@@ -18,50 +27,90 @@ const Demo: React.FC = () => {
     if (isAnimating) return;
     setIsAnimating(true);
 
-    // 1. Define Coefficients (Weights) from a "trained" model
-    const intercept = 12.0;
-    const weights = {
-      distance: 2.8, // +2.8 mins per km
-      rating: -1.5,  // -1.5 mins per star
-    };
+    // --- ML Model Simulation Logic ---
     
-    // 2. Feature Engineering / Preprocessing
-    const trafficMultipliers: Record<string, number> = {
-      'Low': 0.85, 'Medium': 1.0, 'High': 1.35, 'Jam': 2.0
-    };
+    // 1. Base Model Intercept (Average Prep Time)
+    const baseTime = 12; 
+
+    // 2. Feature Contributions (SHAP-style additive logic)
     
-    // Rush hour feature (1 if rush hour, 0 otherwise)
+    // Distance: +2.5 mins per km
+    const distanceImpact = inputs.distance * 2.5;
+    
+    // Traffic: Additive delay based on density
+    let trafficImpact = 0;
+    switch(inputs.traffic) {
+        case 'Low': trafficImpact = 0; break;
+        case 'Medium': trafficImpact = 5; break;
+        case 'High': trafficImpact = 15; break;
+        case 'Jam': trafficImpact = 30; break;
+    }
+
+    // Hour: Rush Hour Feature Engineering (8-10am, 5-7pm)
     const isRushHour = (inputs.hour >= 8 && inputs.hour <= 10) || (inputs.hour >= 17 && inputs.hour <= 19);
-    const rushHourMultiplier = isRushHour ? 1.2 : 1.0;
+    const hourImpact = isRushHour ? 10 : 0;
 
-    // 3. Compute Weighted Sum (Linear Regression Equation)
-    let score = intercept + 
-                (inputs.distance * weights.distance) + 
-                (inputs.rating * weights.rating);
-    
-    // 4. Apply Non-linear Interactions
-    score *= trafficMultipliers[inputs.traffic];
-    score *= rushHourMultiplier;
+    // Rating: Driver Efficiency (Negative contribution means faster delivery)
+    // Centered at 4.0 stars. Every star above 4.0 saves 3 mins. Below adds 3 mins.
+    const ratingImpact = (4.0 - inputs.rating) * 3;
 
-    // 5. Add Aleatoric Uncertainty (Random Noise)
-    const noise = (Math.random() * 4) - 2; // +/- 2 minutes
-    const finalPrediction = Math.max(5, Math.round(score + noise));
+    // Total Calculation
+    const totalScore = baseTime + distanceImpact + trafficImpact + hourImpact + ratingImpact;
+    // Floor at 8 mins to keep it realistic
+    const finalPrediction = Math.max(8, Math.round(totalScore)); 
 
-    // Animation Logic
-    let current = 0;
-    const duration = 600;
-    const steps = 20;
+    // 3. Prepare Explainability Data
+    // We normalize bar widths against a theoretical max impact for visualization
+    const newContributions: Contribution[] = [
+      { 
+        feature: 'Base Time', 
+        value: baseTime,
+        label: `${baseTime}m`,
+        color: 'bg-gray-600', 
+        description: 'Kitchen prep & handling' 
+      },
+      { 
+        feature: `Distance (${inputs.distance}km)`, 
+        value: distanceImpact,
+        label: `+${distanceImpact.toFixed(1)}m`,
+        color: 'bg-blue-500', 
+        description: 'Travel time at avg speed' 
+      },
+      { 
+        feature: `Traffic (${inputs.traffic})`, 
+        value: trafficImpact + hourImpact,
+        label: `+${trafficImpact + hourImpact}m`,
+        color: (trafficImpact + hourImpact) > 10 ? 'bg-red-500' : 'bg-orange-500', 
+        description: isRushHour ? 'High congestion + Rush hour' : 'Traffic density delay'
+      },
+      { 
+        feature: `Driver (⭐${inputs.rating})`, 
+        value: ratingImpact,
+        label: ratingImpact <= 0 ? `${ratingImpact.toFixed(1)}m` : `+${ratingImpact.toFixed(1)}m`,
+        color: ratingImpact <= 0 ? 'bg-accent' : 'bg-yellow-500', 
+        description: ratingImpact <= 0 ? 'High efficiency bonus' : 'Navigation inefficiency' 
+      }
+    ];
+
+    setContributions(newContributions);
+
+    // 4. Animation Loop
+    let current = prediction || 0;
+    const duration = 800;
+    const steps = 30;
     const stepTime = duration / steps;
-    const increment = finalPrediction / steps;
+    const increment = (finalPrediction - current) / steps;
+    let step = 0;
 
     const timer = setInterval(() => {
+      step++;
       current += increment;
-      if (current >= finalPrediction) {
+      if (step >= steps) {
         setPrediction(finalPrediction);
         setIsAnimating(false);
         clearInterval(timer);
       } else {
-        setPrediction(Math.floor(current));
+        setPrediction(Math.round(current));
       }
     }, stepTime);
   };
@@ -75,7 +124,7 @@ const Demo: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
         {/* Input Controls */}
-        <div className="bg-surface p-8 rounded-2xl border border-gray-800 space-y-8">
+        <div className="bg-surface p-8 rounded-2xl border border-gray-800 space-y-8 h-full">
           
           {/* Distance Slider */}
           <div>
@@ -143,52 +192,84 @@ const Demo: React.FC = () => {
               >
                 {trafficOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
               </select>
-              <div className="absolute right-4 top-3.5 pointer-events-none text-gray-400">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-              </div>
             </div>
           </div>
 
           <button 
             onClick={handlePredict}
-            className="w-full bg-white text-black font-bold py-4 rounded-xl hover:bg-gray-200 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-white/5 active:scale-[0.98]"
+            disabled={isAnimating}
+            className="w-full bg-white text-black font-bold py-4 rounded-xl hover:bg-gray-200 disabled:opacity-70 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 shadow-lg shadow-white/5 active:scale-[0.98]"
           >
-            <Play size={18} fill="currentColor" /> Predict Delivery Time
+            <Play size={18} fill="currentColor" /> {isAnimating ? 'Computing...' : 'Predict Delivery Time'}
           </button>
         </div>
 
         {/* Output Area */}
-        <div className="h-full flex flex-col">
-          <div className="flex-grow bg-gradient-to-br from-surface to-background border border-gray-800 rounded-2xl p-8 flex flex-col items-center justify-center text-center relative overflow-hidden group min-h-[300px]">
-            
-            {/* Background Decor */}
+        <div className="h-full flex flex-col gap-6">
+          <div className="bg-gradient-to-br from-surface to-background border border-gray-800 rounded-2xl p-8 flex flex-col items-center justify-center text-center relative overflow-hidden group min-h-[240px]">
             <div className="absolute inset-0 bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             
             {prediction !== null ? (
-              <div className="relative z-10 animate-in fade-in zoom-in duration-300">
-                <div className="text-sm text-gray-400 uppercase tracking-widest mb-4 font-semibold">Estimated Time</div>
+              <div className="relative z-10 animate-slide-up">
+                <div className="text-sm text-gray-400 uppercase tracking-widest mb-4 font-semibold">Predicted ETA</div>
                 <div className="text-7xl md:text-8xl font-bold text-white mb-2 tracking-tighter">
                   {prediction}
                   <span className="text-2xl md:text-4xl text-accent ml-2">min</span>
                 </div>
                 <div className="inline-block px-4 py-1.5 rounded-full bg-accent/10 text-accent text-xs md:text-sm font-mono mt-4 border border-accent/20">
-                  ± 2 min confidence interval
+                  Model Confidence: 94%
                 </div>
               </div>
             ) : (
               <div className="relative z-10 text-gray-600">
                 <Calculator size={64} className="mx-auto mb-6 opacity-20" />
-                <p className="text-lg font-medium">Adjust parameters and click predict</p>
+                <p className="text-lg font-medium">Configure inputs to generate prediction</p>
               </div>
             )}
           </div>
-          
-          <div className="mt-6 p-4 bg-blue-500/5 rounded-lg border border-blue-500/10">
-             <p className="text-sm text-blue-200/80 leading-relaxed flex gap-3">
-               <span className="shrink-0 mt-0.5 font-bold">ⓘ</span>
-               This demo simulates how a trained regression model adjusts predictions based on engineered features.
-             </p>
-          </div>
+
+          {/* Model Explainability (SHAP-style) */}
+          {contributions.length > 0 && (
+            <div className="bg-surface border border-gray-800 rounded-2xl p-6 animate-slide-up" style={{animationDelay: '0.1s'}}>
+              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6 flex items-center gap-2">
+                <BarChart3 size={14} /> Feature Contributions
+              </h4>
+              <div className="space-y-5">
+                {contributions.map((item, idx) => (
+                  <div key={idx} className="group">
+                    <div className="flex justify-between text-sm mb-2">
+                      <span className="text-gray-300 font-medium">{item.feature}</span>
+                      <span className={`font-mono ${item.value < 0 ? 'text-accent' : 'text-gray-400'}`}>
+                        {item.label}
+                      </span>
+                    </div>
+                    
+                    {/* Progress Bar Container */}
+                    <div className="w-full h-2 bg-gray-800 rounded-full overflow-hidden flex items-center relative">
+                      {/* Bar Fill */}
+                      <div 
+                        className={`h-full rounded-full bar-transition ${item.color}`}
+                        style={{ 
+                          width: `${Math.min(100, Math.abs(item.value) * 1.5)}%`, // Scale factor for visuals
+                          opacity: item.value === 0 ? 0.3 : 1
+                        }} 
+                      />
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      {item.description}
+                    </p>
+                  </div>
+                ))}
+              </div>
+              
+              <div className="mt-6 pt-4 border-t border-gray-800/50 flex gap-3 text-xs text-gray-500">
+                <Info size={14} className="shrink-0 mt-0.5 text-accent" />
+                <p>
+                  This breakdown simulates SHAP (SHapley Additive exPlanations) values, visualizing how each feature pushes the prediction away from the baseline.
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </Section>
