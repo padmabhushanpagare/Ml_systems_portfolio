@@ -1,6 +1,7 @@
 import React from 'react';
 import Hero from './components/Hero';
 import WhyHireMe from './components/WhyHireMe';
+import QuickEvaluation from './components/QuickEvaluation';
 import Approach from './components/Approach';
 import Projects from './components/Projects';
 import Demo from './components/Demo';
@@ -35,6 +36,7 @@ const App: React.FC = () => {
       <main>
         <Hero />
         <WhyHireMe />
+        <QuickEvaluation />
         <Approach />
         <Projects />
         <Demo />
