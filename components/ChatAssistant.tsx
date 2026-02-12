@@ -1,20 +1,27 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageSquare, X, Send, Bot } from 'lucide-react';
+import { MessageSquare, X, Send, Bot, Sparkles } from 'lucide-react';
 
 const ChatAssistant: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [messages, setMessages] = useState<{role: 'user' | 'assistant', text: string}[]>([
-    { role: 'assistant', text: "Hello! I'm an AI assistant trained on Alex's portfolio. Ask me about his projects, skills, or experience." }
+    { role: 'assistant', text: "Hi — I can walk you through my ML systems and projects." }
   ]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const suggestions = [
+    "Tell me about the delivery system",
+    "Explain your ML approach",
+    "What tools do you use?",
+    "How do you optimize models?"
+  ];
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  useEffect(scrollToBottom, [messages, isTyping]);
+  useEffect(scrollToBottom, [messages, isTyping, isOpen]);
 
   const generateResponse = (input: string): string => {
     const text = input.toLowerCase();
@@ -46,12 +53,17 @@ const ChatAssistant: React.FC = () => {
         return "SYSTEMS APPROACH\n\nI focus on the full ML lifecycle: from Data Strategy (Feature Stores) to Modeling (Iterative Baselines) and Productionization (Scalable APIs), ensuring continuous value via rigorous Monitoring (Drift/Latency).";
     }
 
-    // 4. Contact
+    // 4. Optimization (New)
+    if (text.includes('optimize') || text.includes('optimization') || text.includes('latency') || text.includes('fast')) {
+        return "OPTIMIZATION STRATEGY\n\nMODEL: I employ quantization (INT8), knowledge distillation, and ONNX Runtime to reduce inference latency.\n\nSYSTEM: I implement aggressive caching layers (Redis), async processing queues (Kafka), and horizontal autoscaling on Kubernetes to handle high throughput.";
+    }
+
+    // 5. Contact
     if (text.includes('contact') || text.includes('email') || text.includes('hire') || text.includes('resume')) {
         return "CONTACT INFO\n\nYou can reach me at hello@alexchen.dev. I am currently open to discussing new opportunities in ML Systems Engineering.";
     }
 
-    // 5. Casual / Fallback
+    // 6. Casual / Fallback
     if (text.includes('hello') || text.includes('hi ') || text === 'hi' || text.includes('hey')) {
         return "Hello! Feel free to ask about my specific projects like the 'Predictive Maintenance System' or my technical skills.";
     }
@@ -59,38 +71,41 @@ const ChatAssistant: React.FC = () => {
     return "I can provide details on my Machine Learning projects, MLOps experience, or technical stack. Try asking about 'Predictive Maintenance', 'Skills', or 'Contact'.";
   };
 
-  const handleSend = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!inputValue.trim()) return;
-
+  const sendMessage = (text: string) => {
+    if (!text.trim()) return;
+    
     // Add user message
-    const userMsg = inputValue;
-    setMessages(prev => [...prev, { role: 'user', text: userMsg }]);
+    setMessages(prev => [...prev, { role: 'user', text: text }]);
     setInputValue("");
     setIsTyping(true);
 
     // Simulate AI delay
     setTimeout(() => {
-        const responseText = generateResponse(userMsg);
+        const responseText = generateResponse(text);
         setMessages(prev => [...prev, { role: 'assistant', text: responseText }]);
         setIsTyping(false);
     }, 800);
+  };
+
+  const handleSend = (e: React.FormEvent) => {
+    e.preventDefault();
+    sendMessage(inputValue);
   };
 
   return (
     <>
       {/* Chat Panel */}
       <div 
-        className={`fixed bottom-24 right-6 w-[90vw] md:w-80 max-h-[600px] h-[450px] bg-surface border border-gray-800 rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden transition-all duration-300 origin-bottom-right ${isOpen ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-4 pointer-events-none'}`}
+        className={`fixed bottom-24 right-6 w-[90vw] md:w-80 max-h-[600px] h-[500px] bg-surface border border-gray-800 rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden transition-all duration-300 origin-bottom-right ${isOpen ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-4 pointer-events-none'}`}
       >
         {/* Header */}
         <div className="p-4 bg-surface border-b border-gray-800 flex justify-between items-center">
             <div className="flex items-center gap-2">
                 <div className="p-1.5 bg-accent/10 rounded-lg text-accent">
-                    <Bot size={18} />
+                    <Sparkles size={18} />
                 </div>
                 <div>
-                    <h3 className="text-sm font-bold text-white">Assistant</h3>
+                    <h3 className="text-sm font-bold text-white">AI Assistant</h3>
                     <p className="text-[10px] text-accent flex items-center gap-1">
                         <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
                         Online
@@ -109,7 +124,10 @@ const ChatAssistant: React.FC = () => {
         {/* Messages Area */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-background/50 scroll-smooth">
             {messages.map((msg, idx) => (
-                <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div 
+                    key={idx} 
+                    className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-slide-up`}
+                >
                     <div 
                         className={`max-w-[85%] p-3 text-sm leading-relaxed whitespace-pre-wrap ${
                             msg.role === 'user' 
@@ -122,9 +140,26 @@ const ChatAssistant: React.FC = () => {
                 </div>
             ))}
             
+            {/* Suggested Prompts (Only show if just greeting exists) */}
+            {messages.length === 1 && !isTyping && (
+                <div className="grid gap-2 mt-2 animate-slide-up" style={{animationDelay: '0.1s'}}>
+                    <p className="text-xs text-gray-500 mb-1 ml-1">Suggested topics:</p>
+                    {suggestions.map((s, i) => (
+                        <button 
+                            key={i} 
+                            onClick={() => sendMessage(s)}
+                            className="text-left text-xs text-accent border border-gray-800 hover:border-accent/50 bg-surface hover:bg-surface/80 p-3 rounded-xl transition-all active:scale-95 flex items-center justify-between group"
+                        >
+                            {s}
+                            <ArrowRightSmall />
+                        </button>
+                    ))}
+                </div>
+            )}
+
             {/* Typing Indicator */}
             {isTyping && (
-                <div className="flex justify-start">
+                <div className="flex justify-start animate-slide-up">
                     <div className="bg-surface border border-gray-700 p-3 rounded-2xl rounded-bl-sm flex gap-1.5 items-center h-10">
                         <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-[bounce_1s_infinite_-0.3s]"></span>
                         <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-[bounce_1s_infinite_-0.15s]"></span>
@@ -188,5 +223,12 @@ const ChatAssistant: React.FC = () => {
     </>
   );
 };
+
+const ArrowRightSmall = () => (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0 duration-300">
+        <path d="M5 12h14" />
+        <path d="m12 5 7 7-7 7" />
+    </svg>
+);
 
 export default ChatAssistant;
