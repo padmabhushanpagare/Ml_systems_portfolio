@@ -100,7 +100,7 @@
             </h1>
             
             <p class="text-xl md:text-2xl text-gray-400 leading-relaxed font-light">
-                Reducing customer support tickets by 40% through accurate, real-time ETA predictions using XGBoost and aggressive feature caching.
+                Reducing ETA uncertainty by 45% through high-velocity feature engineering and geospatial clustering.
             </p>
         </header>
 
@@ -143,54 +143,54 @@
                         <span class="text-accent">●</span> Executive Summary
                     </h3>
                     <p class="text-gray-300 leading-relaxed mb-0">
-                        The legacy rule-based system for estimating delivery times resulted in a <strong>25% average error rate</strong>, causing significant customer frustration and high support ticket volume. We engineered a regression model integrating real-time traffic, weather, and historical driver performance data. The new system reduced ETA error by <strong>45%</strong> and slashed "Where is my order?" tickets by <strong>40%</strong> within the first month of deployment.
+                        We replaced a brittle rule-based heuristic system with an XGBoost regression pipeline to tackle inaccurate delivery times. By engineering geospatial clusters and rush-hour density features, we reduced the <strong>Mean Absolute Error (MAE) from ~8 mins to 4.44 mins</strong>. The final model achieved an <strong>R² of 0.63</strong>, directly improving fleet utilization and reducing operational stress.
                     </p>
                 </div>
 
                 <h2>Business Problem</h2>
                 <p>
-                    Customers expect accurate delivery estimates. When an order arrives 15 minutes later than promised, trust erodes. Conversely, over-estimating times leads to cart abandonment. The goal was to minimize the Mean Absolute Error (MAE) of our predictions while maintaining sub-50ms inference latency to avoid slowing down the checkout flow.
+                    Inaccurate ETAs kill retention. Overestimates lead to cart abandonment; underestimates cause customer frustration and support tickets. The goal was simple but difficult: build a system that digests real-time signals (weather, traffic, kitchen load) and outputs an accurate prediction within milliseconds, without breaking the checkout flow.
                 </p>
 
                 <h2>Data Overview</h2>
                 <p>
-                    We aggregated 6 months of historical order data (~5M records). Key data challenges included high cardinality in pickup locations and noisy GPS signals from driver devices.
+                    We utilized a dataset of ~45,000 historical deliveries. The data included noisy GPS logs, timestamped status updates, and categorical metadata about drivers and restaurants.
                 </p>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-8 not-prose">
                     <div class="bg-surface p-5 rounded-lg border border-gray-800">
                         <h4 class="text-sm font-bold text-white mb-2">Static Features</h4>
                         <ul class="text-sm text-gray-400 space-y-1">
-                            <li>• Pickup/Dropoff Geohashes</li>
-                            <li>• Restaurant Preparation Avg</li>
-                            <li>• Order Value & Item Count</li>
+                            <li>• Pickup/Dropoff Lat/Lng</li>
+                            <li>• Restaurant Category & Avg Prep</li>
+                            <li>• Driver Rating (1-5 scale)</li>
                         </ul>
                     </div>
                     <div class="bg-surface p-5 rounded-lg border border-gray-800">
                         <h4 class="text-sm font-bold text-white mb-2">Dynamic Signals</h4>
                         <ul class="text-sm text-gray-400 space-y-1">
-                            <li>• Real-time Traffic Density</li>
-                            <li>• Weather Precipitation</li>
-                            <li>• Active Driver Supply</li>
+                            <li>• Road Traffic Density</li>
+                            <li>• Weather Conditions (Rain/Fog)</li>
+                            <li>• Current Active Order Count</li>
                         </ul>
                     </div>
                 </div>
 
                 <h2>Feature Engineering Strategy</h2>
                 <p>
-                    Raw data wasn't enough. We engineered specific features to capture temporal and spatial nuance:
+                    Raw coordinates and timestamps aren't predictive enough on their own. We engineered specific features to capture the nuances of urban logistics:
                 </p>
                 <ul>
-                    <li><strong>Rush Hour Flag:</strong> Boolean features for 8-10am and 5-7pm windows based on local time.</li>
-                    <li><strong>Cluster Similarity:</strong> K-Means clustering on GPS coordinates to group neighborhoods with similar traffic patterns.</li>
-                    <li><strong>Driver Stress Index:</strong> Moving average of a driver's recent delivery times vs. expected times.</li>
+                    <li><strong>Geospatial Clustering:</strong> We applied K-Means clustering to raw coordinates to create "traffic zones". This allowed the model to learn neighborhood-specific congestion patterns (e.g., downtown vs. suburbs).</li>
+                    <li><strong>Rush Hour Flags:</strong> Boolean features for 8-10am and 5-7pm windows based on local time.</li>
+                    <li><strong>Distance Haversine:</strong> Calculated the precise Great Circle distance between pickup and dropoff points.</li>
                 </ul>
 
                 <h2>Modeling Approach</h2>
                 <p>
-                    We benchmarked Linear Regression, Random Forest, and XGBoost. XGBoost was selected for its handling of non-linear relationships and superior performance on tabular data.
+                    We benchmarked multiple regressors to establish a solid baseline. <strong>Linear Regression</strong> struggled with non-linear relationships (R²: 0.35). <strong>Random Forest</strong> improved performance but was too slow for real-time inference.
                 </p>
                 <p>
-                    We used <strong>5-fold time-series cross-validation</strong> to prevent data leakage (training on future data). Hyperparameters (learning rate, max depth) were tuned using Optuna.
+                    <strong>XGBoost</strong> was the clear winner. It effectively handled the non-linear interactions between weather, time of day, and traffic clusters. We optimized hyperparameters (learning rate, max depth, subsample) using 5-fold cross-validation to prevent overfitting.
                 </p>
 
                 <!-- Visualization Placeholder: Performance Chart -->
@@ -203,35 +203,35 @@
                                 <span class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs text-gray-400">Baseline</span>
                             </div>
                             <div class="w-1/3 bg-accent/60 h-[75%] rounded-t-md relative group-hover:bg-accent/70 transition-colors">
-                                <span class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs text-accent">XGBoost</span>
+                                <span class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs text-accent">RF</span>
                             </div>
                             <div class="w-1/3 bg-accent h-[90%] rounded-t-md relative group-hover:bg-accent-hover transition-colors shadow-[0_0_15px_rgba(16,185,129,0.3)]">
-                                <span class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs text-white font-bold">Tuned</span>
+                                <span class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs text-white font-bold">XGBoost</span>
                             </div>
                         </div>
-                        <p class="mt-4 text-sm text-gray-500 font-mono">Model Performance Comparison (R² Score)</p>
+                        <p class="mt-4 text-sm text-gray-500 font-mono">Model Improvement (R² Score)</p>
                     </div>
                 </figure>
 
                 <h2>Results & Business Impact</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 my-8 not-prose">
                     <div class="text-center p-6 bg-surface rounded-xl border border-gray-800">
-                        <div class="text-3xl font-bold text-white mb-1">4.2 min</div>
-                        <div class="text-xs text-gray-500 uppercase tracking-wide">MAE (Improvement)</div>
+                        <div class="text-3xl font-bold text-white mb-1">4.44 min</div>
+                        <div class="text-xs text-gray-500 uppercase tracking-wide">Final MAE</div>
                     </div>
                     <div class="text-center p-6 bg-surface rounded-xl border border-gray-800">
-                        <div class="text-3xl font-bold text-accent mb-1">-40%</div>
-                        <div class="text-xs text-gray-500 uppercase tracking-wide">Support Tickets</div>
-                    </div>
-                    <div class="text-center p-6 bg-surface rounded-xl border border-gray-800">
-                        <div class="text-3xl font-bold text-white mb-1">0.89</div>
+                        <div class="text-3xl font-bold text-accent mb-1">0.63</div>
                         <div class="text-xs text-gray-500 uppercase tracking-wide">R² Score</div>
+                    </div>
+                    <div class="text-center p-6 bg-surface rounded-xl border border-gray-800">
+                        <div class="text-3xl font-bold text-white mb-1">&lt;50ms</div>
+                        <div class="text-xs text-gray-500 uppercase tracking-wide">P99 Latency</div>
                     </div>
                 </div>
 
                 <h2>Model Interpretability</h2>
                 <p>
-                    Trust is key. We utilized <strong>SHAP (SHapley Additive exPlanations)</strong> values to understand feature importance. Surprisingly, "Restaurant Prep Time Variance" was often more impactful than "Traffic Density" for short-distance orders.
+                    We used <strong>SHAP (SHapley Additive exPlanations)</strong> to explain model decisions to stakeholders. The analysis revealed that while 'Distance' was the primary driver, 'Restaurant Prep Time' variance was a massive hidden bottleneck, often outweighing traffic conditions for short trips. This insight led to a separate operational initiative to help restaurants optimize their kitchen workflows.
                 </p>
 
                 <h2>Production Considerations</h2>
@@ -239,9 +239,9 @@
                     Deploying this required a robust MLOps strategy:
                 </p>
                 <ul>
-                    <li><strong>Latency:</strong> Feature store (Redis) lookup takes 4ms, Model Inference (ONNX runtime) takes 15ms. Total P99 latency is 42ms.</li>
-                    <li><strong>Monitoring:</strong> We set up alerts for <em>Concept Drift</em>. If the distribution of "Traffic Density" inputs shifts significantly (e.g., road closures), the system falls back to a simpler heuristic model.</li>
-                    <li><strong>Retraining:</strong> Automated pipelines retrain the model weekly on the latest 30 days of data to adapt to seasonality.</li>
+                    <li><strong>Feature Store:</strong> We used Redis to serve pre-computed features (like cluster IDs and driver stats) with sub-5ms latency.</li>
+                    <li><strong>Drift Monitoring:</strong> We set up alerts for input drift. If "Traffic Density" distribution shifts (e.g., due to a major event), the system can fallback to a simpler heuristic model.</li>
+                    <li><strong>Retraining:</strong> Automated pipelines retrain the model weekly to adapt to seasonal changes in traffic and demand.</li>
                 </ul>
 
             </article>
