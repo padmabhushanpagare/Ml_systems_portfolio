@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Eye, ChevronDown, Check, Info, X } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Eye, ChevronDown, Check, Info, X, Sparkles, ArrowRight } from 'lucide-react';
 
 type Persona = 'default' | 'recruiter' | 'manager' | 'interviewer' | 'founder';
 
@@ -58,6 +58,8 @@ const CONFIG: Record<Persona, PersonaConfig> = {
 const ViewMode: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isBannerVisible, setIsBannerVisible] = useState(false);
+  const [suggestion, setSuggestion] = useState<Persona | null>(null);
+  const hasSuggestedRef = useRef(false);
   
   // Initialize from localStorage or default
   const [activeMode, setActiveMode] = useState<Persona>(() => {
@@ -67,17 +69,72 @@ const ViewMode: React.FC = () => {
     return 'default';
   });
 
-  // Handle Mode Changes
+  // Smart Suggestion Logic
+  useEffect(() => {
+    // Only run detection in default mode and if we haven't suggested yet
+    if (activeMode !== 'default' || hasSuggestedRef.current) return;
+
+    const MOUNT_TIME = Date.now();
+    const TIME_LIMIT = 45000; // 45 seconds to trigger "quick" detection
+
+    const triggerSuggestion = (mode: Persona) => {
+        const elapsed = Date.now() - MOUNT_TIME;
+        if (elapsed < TIME_LIMIT && !hasSuggestedRef.current) {
+            setSuggestion(mode);
+            hasSuggestedRef.current = true;
+        }
+    };
+
+    // 1. Resume Click Listener (Recruiter)
+    const handleResumeClick = () => triggerSuggestion('recruiter');
+    const resumeBtn = document.getElementById('resume-btn');
+    if (resumeBtn) resumeBtn.addEventListener('click', handleResumeClick);
+
+    // 2. Section Observers (Manager / Interviewer)
+    const observer = new IntersectionObserver((entries) => {
+        if (hasSuggestedRef.current || (Date.now() - MOUNT_TIME > TIME_LIMIT)) {
+            observer.disconnect();
+            return;
+        }
+
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                if (entry.target.id === 'projects') {
+                    // Small delay to verify intent
+                    setTimeout(() => {
+                        if (entry.isIntersecting && !hasSuggestedRef.current) triggerSuggestion('manager');
+                    }, 500);
+                }
+                if (entry.target.id === 'interview') {
+                     triggerSuggestion('interviewer');
+                }
+            }
+        });
+    }, { threshold: 0.5 }); // 50% visibility required
+
+    const projectsEl = document.getElementById('projects');
+    const interviewEl = document.getElementById('interview');
+    
+    if (projectsEl) observer.observe(projectsEl);
+    if (interviewEl) observer.observe(interviewEl);
+
+    return () => {
+        if (resumeBtn) resumeBtn.removeEventListener('click', handleResumeClick);
+        observer.disconnect();
+    };
+  }, [activeMode]);
+
+  // Handle Mode Changes (Effects)
   useEffect(() => {
     // 1. Persist
     localStorage.setItem('portfolio_view_mode', activeMode);
 
-    // 2. Dispatch Global Event for other components (e.g. InterviewQA expansion)
+    // 2. Dispatch Global Event
     window.dispatchEvent(new CustomEvent('viewModeChange', { detail: activeMode }));
 
     const config = CONFIG[activeMode];
     
-    // 3. Reset all sections first
+    // 3. Reset all sections
     document.querySelectorAll('section, #resume-btn, #chat-assistant').forEach(el => {
       el.classList.remove('view-mode-dimmed', 'view-mode-highlight', 'view-mode-target-highlight');
       (el as HTMLElement).style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
@@ -88,7 +145,8 @@ const ViewMode: React.FC = () => {
         return;
     }
 
-    // Show banner on new mode activation
+    // Dismiss suggestion if mode changes manually
+    setSuggestion(null);
     setIsBannerVisible(true);
 
     // 4. Apply Dimming
@@ -103,7 +161,7 @@ const ViewMode: React.FC = () => {
       if (el) el.classList.add('view-mode-highlight');
     });
 
-    // 6. Special Element Highlighting (Buttons/Widgets)
+    // 6. Special Element Highlighting
     if (activeMode === 'recruiter') {
         const btn = document.getElementById('resume-btn');
         if (btn) btn.classList.add('view-mode-target-highlight');
@@ -123,6 +181,13 @@ const ViewMode: React.FC = () => {
 
   }, [activeMode]);
 
+  const acceptSuggestion = () => {
+    if (suggestion) {
+        setActiveMode(suggestion);
+        setSuggestion(null);
+    }
+  };
+
   return (
     <>
       <style>
@@ -140,7 +205,6 @@ const ViewMode: React.FC = () => {
             position: relative;
             z-index: 10;
           }
-          /* Left border indicator for sections */
           section.view-mode-highlight::before {
             content: '';
             position: absolute;
@@ -156,8 +220,6 @@ const ViewMode: React.FC = () => {
           @media (max-width: 768px) {
             section.view-mode-highlight::before { left: -0.5rem; }
           }
-          
-          /* Pulsing highlight for buttons/widgets */
           .view-mode-target-highlight {
             position: relative;
             z-index: 20 !important;
@@ -172,7 +234,7 @@ const ViewMode: React.FC = () => {
         `}
       </style>
 
-      {/* Dynamic Contextual Banner */}
+      {/* Dynamic Contextual Banner (Active Mode) */}
       {activeMode !== 'default' && isBannerVisible && (
         <div className="fixed top-20 md:top-24 left-0 right-0 z-40 flex justify-center pointer-events-none animate-slide-up">
           <div className="bg-surface/95 backdrop-blur-md border border-accent/40 text-white text-xs md:text-sm py-2 pl-5 pr-2 rounded-full shadow-[0_0_20px_rgba(0,0,0,0.5)] flex items-center gap-4 pointer-events-auto transition-all">
@@ -180,9 +242,7 @@ const ViewMode: React.FC = () => {
                 <Info size={16} className="text-accent shrink-0" />
                 <span className="font-medium tracking-wide">{CONFIG[activeMode].bannerText}</span>
             </div>
-            
             <div className="h-4 w-[1px] bg-gray-700"></div>
-
             <button 
               onClick={() => setIsBannerVisible(false)} 
               className="p-1 hover:bg-white/10 rounded-full text-gray-400 hover:text-white transition-colors"
@@ -192,6 +252,42 @@ const ViewMode: React.FC = () => {
             </button>
           </div>
         </div>
+      )}
+
+      {/* Smart Suggestion Toast (Default Mode) */}
+      {suggestion && activeMode === 'default' && (
+         <div className="fixed top-24 right-6 z-50 animate-slide-up w-72">
+            <div className="bg-surface/95 backdrop-blur-xl border border-accent/50 rounded-xl shadow-2xl p-4 relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-1 h-full bg-accent"></div>
+                <button 
+                   onClick={() => setSuggestion(null)}
+                   className="absolute top-2 right-2 text-gray-500 hover:text-white transition-colors"
+                >
+                    <X size={14} />
+                </button>
+                
+                <div className="flex items-start gap-3 mb-3">
+                    <div className="p-2 bg-accent/10 rounded-lg text-accent shrink-0">
+                        <Sparkles size={18} />
+                    </div>
+                    <div>
+                        <h4 className="text-sm font-bold text-white">Suggested View</h4>
+                        <p className="text-xs text-gray-400 mt-1">
+                            Switch to <span className="text-accent font-mono">{CONFIG[suggestion].label}</span> mode for an optimized experience?
+                        </p>
+                    </div>
+                </div>
+
+                <div className="flex gap-2 pl-10">
+                    <button 
+                        onClick={acceptSuggestion}
+                        className="flex-1 bg-accent hover:bg-accent-hover text-background text-xs font-bold py-2 rounded-lg transition-colors flex items-center justify-center gap-2"
+                    >
+                        Switch View <ArrowRight size={12} />
+                    </button>
+                </div>
+            </div>
+         </div>
       )}
 
       {/* Toggle Dropdown */}
@@ -212,10 +308,7 @@ const ViewMode: React.FC = () => {
 
         {isOpen && (
           <>
-            {/* Backdrop to close */}
             <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-            
-            {/* Dropdown Menu */}
             <div className="absolute right-0 top-full mt-2 w-72 bg-surface border border-gray-800 rounded-xl shadow-2xl z-50 overflow-hidden ring-1 ring-black/5 animate-slide-up">
               <div className="py-1">
                 <div className="px-4 py-2 text-xs font-bold text-gray-500 uppercase tracking-wider border-b border-gray-800">Select Persona</div>
