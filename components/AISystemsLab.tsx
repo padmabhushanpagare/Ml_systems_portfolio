@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Section from './Section';
-import { FlaskConical, Zap, Activity, Cpu, BarChart4, ArrowRight, BookOpen, ChevronDown, Map, Box, Lock, MousePointer2, CheckCircle2 } from 'lucide-react';
+import { FlaskConical, Zap, Activity, Cpu, BarChart4, ArrowRight, BookOpen, ChevronDown, Map, Box, Lock, MousePointer2, CheckCircle2, ThumbsUp } from 'lucide-react';
 
 const GoldPricePrototype: React.FC = () => {
   const [price, setPrice] = useState(2342.50);
@@ -261,6 +261,79 @@ const SystemRoadmap: React.FC = () => {
   );
 };
 
+const ExperimentVoting: React.FC = () => {
+    // Base votes to make it look populated
+    const baseVotes: Record<string, number> = {
+        'ex-1': 124,
+        'ex-2': 89,
+        'ex-3': 203,
+        'ex-4': 156
+    };
+
+    const [votes, setVotes] = useState<Record<string, number>>(baseVotes);
+    const [userVotes, setUserVotes] = useState<Record<string, number>>({});
+
+    useEffect(() => {
+        const saved = localStorage.getItem('ai_lab_votes');
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            setUserVotes(parsed);
+        }
+    }, []);
+
+    const handleVote = (id: string) => {
+        const newCount = (userVotes[id] || 0) + 1;
+        const updatedUserVotes = { ...userVotes, [id]: newCount };
+        setUserVotes(updatedUserVotes);
+        localStorage.setItem('ai_lab_votes', JSON.stringify(updatedUserVotes));
+    };
+
+    const ideas = [
+        { id: 'ex-1', title: "LLM-To-SQL Agent", desc: "Natural language interface for complex warehouse queries." },
+        { id: 'ex-2', title: "Edge CV Anomaly", desc: "Running vision models on WASM for browser-based detection." },
+        { id: 'ex-3', title: "Voice BI Dashboard", desc: "Conversational analytics with voice-input context switching." },
+        { id: 'ex-4', title: "Federated Learning", desc: "Privacy-preserving model training across client browsers." }
+    ];
+
+    return (
+        <div className="mt-20 pt-12 border-t border-gray-800/50">
+            <div className="flex items-center gap-3 mb-8">
+                <div className="p-2 bg-gray-800/50 rounded-lg text-gray-400">
+                    <ThumbsUp size={16} />
+                </div>
+                <div>
+                    <h3 className="text-lg font-bold text-white">Vote for Next Experiment</h3>
+                    <p className="text-sm text-gray-500">Help prioritize the R&D backlog.</p>
+                </div>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {ideas.map((item) => {
+                    const totalVotes = (baseVotes[item.id] || 0) + (userVotes[item.id] || 0);
+                    return (
+                        <button 
+                            key={item.id}
+                            onClick={() => handleVote(item.id)}
+                            className="group text-left bg-surface/30 border border-gray-800 hover:bg-surface hover:border-accent/40 p-4 rounded-xl transition-all duration-300 active:scale-[0.98]"
+                        >
+                            <div className="flex justify-between items-start mb-3">
+                                <div className="text-xs font-mono font-bold text-gray-500 group-hover:text-accent transition-colors">
+                                    {totalVotes.toLocaleString()}
+                                </div>
+                                <div className={`p-1.5 rounded-md transition-colors ${userVotes[item.id] ? 'bg-accent/10 text-accent' : 'bg-gray-800/50 text-gray-600 group-hover:text-gray-300'}`}>
+                                    <ThumbsUp size={14} />
+                                </div>
+                            </div>
+                            <h4 className="text-sm font-bold text-gray-200 mb-1.5 group-hover:text-white transition-colors">{item.title}</h4>
+                            <p className="text-xs text-gray-500 leading-relaxed group-hover:text-gray-400">{item.desc}</p>
+                        </button>
+                    );
+                })}
+            </div>
+        </div>
+    );
+};
+
 const ProductBetaZone: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -457,6 +530,9 @@ const ProductBetaZone: React.FC = () => {
              </form>
          )}
       </div>
+
+      {/* Experiment Voting Subsection */}
+      <ExperimentVoting />
       
       <div className="mt-12 text-center flex items-center justify-center gap-2 opacity-60">
          <Box size={14} className="text-gray-500" />
