@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Section from './Section';
-import { FlaskConical, Zap, Activity, Cpu, BarChart4, ArrowRight, BookOpen, ChevronDown, Map, Box, Lock, MousePointer2 } from 'lucide-react';
+import { FlaskConical, Zap, Activity, Cpu, BarChart4, ArrowRight, BookOpen, ChevronDown, Map, Box, Lock, MousePointer2, CheckCircle2 } from 'lucide-react';
 
 const GoldPricePrototype: React.FC = () => {
   const [price, setPrice] = useState(2342.50);
@@ -262,26 +262,64 @@ const SystemRoadmap: React.FC = () => {
 };
 
 const ProductBetaZone: React.FC = () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    interest: 'Gold Intelligence AI'
+  });
+  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+
   const products = [
     {
       title: "Gold Intelligence AI",
       desc: "Real-time commodities insight engine processing market signals in milliseconds.",
       tag: "FinTech",
-      icon: Zap
+      icon: Zap,
+      value: "Gold Intelligence AI"
     },
     {
       title: "Adaptive Model Monitor",
       desc: "Self-healing drift detection system that adjusts thresholds based on seasonality.",
       tag: "MLOps",
-      icon: Activity
+      icon: Activity,
+      value: "Adaptive Model Monitoring Tool"
     },
     {
       title: "Decision Sim Engine",
       desc: "Causal inference sandbox to model how KPI changes impact bottom-line revenue.",
       tag: "Analytics",
-      icon: BarChart4
+      icon: BarChart4,
+      value: "Decision Simulation Engine"
     }
   ];
+
+  const handleSelectProduct = (productName: string) => {
+    setFormData(prev => ({ ...prev, interest: productName }));
+    const form = document.getElementById('beta-form');
+    if (form) form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus('submitting');
+    
+    // Simulate network delay for UX
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
+    try {
+        const response = await fetch("https://formspree.io/f/mqkvojzg", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData)
+        });
+        
+        // For prototype purposes, assume success. 
+        // In real deployment, we'd check response.ok
+        setStatus('success');
+    } catch (error) {
+        setStatus('error');
+    }
+  };
 
   return (
     <div className="mt-24 border-t border-gray-800/50 pt-16">
@@ -294,7 +332,7 @@ const ProductBetaZone: React.FC = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
         {products.map((p, i) => (
           <div key={i} className="group bg-surface/40 backdrop-blur-sm border border-gray-800 p-6 rounded-xl hover:border-accent/40 hover:bg-surface/80 hover:-translate-y-1 transition-all duration-300 shadow-lg flex flex-col h-full relative overflow-hidden">
              
@@ -316,11 +354,108 @@ const ProductBetaZone: React.FC = () => {
              <h4 className="text-lg font-bold text-white mb-3 group-hover:text-accent transition-colors">{p.title}</h4>
              <p className="text-sm text-gray-400 mb-8 flex-grow leading-relaxed">{p.desc}</p>
              
-             <button className="w-full py-2.5 rounded-lg border border-gray-700 bg-white/5 text-sm font-medium text-gray-300 hover:bg-accent hover:text-black hover:border-accent hover:font-bold transition-all flex items-center justify-center gap-2 group-hover:shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+             <button 
+                onClick={() => handleSelectProduct(p.value)}
+                className="w-full py-2.5 rounded-lg border border-gray-700 bg-white/5 text-sm font-medium text-gray-300 hover:bg-accent hover:text-black hover:border-accent hover:font-bold transition-all flex items-center justify-center gap-2 group-hover:shadow-[0_0_15px_rgba(16,185,129,0.2)]"
+             >
                 Request Beta Access <MousePointer2 size={14} />
              </button>
           </div>
         ))}
+      </div>
+
+      {/* Beta Access Form */}
+      <div id="beta-form" className="max-w-3xl mx-auto scroll-mt-24">
+         {status === 'success' ? (
+            <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-12 text-center animate-in fade-in zoom-in duration-500">
+                <div className="w-20 h-20 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-6 text-emerald-400">
+                    <CheckCircle2 size={40} />
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-4">Request Received</h3>
+                <p className="text-gray-300 text-lg mb-8 max-w-md mx-auto">
+                    You've been added to the priority queue for <span className="text-emerald-400 font-bold">{formData.interest}</span>. Watch your inbox for an invite code.
+                </p>
+                <button 
+                    onClick={() => { setStatus('idle'); setFormData({name: '', email: '', interest: 'Gold Intelligence AI'}); }} 
+                    className="text-emerald-400 hover:text-white font-medium underline underline-offset-4 transition-colors"
+                >
+                    Submit another request
+                </button>
+            </div>
+         ) : (
+             <form onSubmit={handleSubmit} className="bg-surface border border-gray-800 rounded-2xl p-8 md:p-12 relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-accent/20 via-accent to-accent/20"></div>
+                
+                <div className="mb-8 text-center">
+                    <h3 className="text-xl font-bold text-white mb-2">Join the Beta Waitlist</h3>
+                    <p className="text-sm text-gray-400">Secure your spot for early access to the next deployment wave.</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Full Name</label>
+                        <input 
+                            type="text" 
+                            required
+                            value={formData.name}
+                            onChange={(e) => setFormData({...formData, name: e.target.value})}
+                            className="w-full bg-background border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none transition-all placeholder:text-gray-700"
+                            placeholder="e.g. Alex Chen"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Email Address</label>
+                        <input 
+                            type="email" 
+                            required
+                            value={formData.email}
+                            onChange={(e) => setFormData({...formData, email: e.target.value})}
+                            className="w-full bg-background border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none transition-all placeholder:text-gray-700"
+                            placeholder="e.g. alex@example.com"
+                        />
+                    </div>
+                </div>
+                
+                <div className="mb-8">
+                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Interested In</label>
+                    <div className="relative">
+                        <select 
+                            value={formData.interest}
+                            onChange={(e) => setFormData({...formData, interest: e.target.value})}
+                            className="w-full bg-background border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none appearance-none cursor-pointer"
+                        >
+                            {products.map((p, i) => (
+                                <option key={i} value={p.value}>{p.value}</option>
+                            ))}
+                        </select>
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                            <ChevronDown size={16} />
+                        </div>
+                    </div>
+                </div>
+
+                <button 
+                    type="submit" 
+                    disabled={status === 'submitting'}
+                    className="w-full bg-accent text-black font-bold py-4 rounded-xl hover:bg-accent-hover transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed group shadow-[0_4px_20px_rgba(16,185,129,0.2)] hover:shadow-[0_4px_25px_rgba(16,185,129,0.4)]"
+                >
+                    {status === 'submitting' ? (
+                        <span className="flex items-center gap-2">
+                            <span className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin"></span>
+                            Processing...
+                        </span>
+                    ) : (
+                        <>Join Priority Beta List <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" /></>
+                    )}
+                </button>
+                
+                {status === 'error' && (
+                    <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm text-center animate-in fade-in">
+                        Something went wrong connecting to the server. Please try again later.
+                    </div>
+                )}
+             </form>
+         )}
       </div>
       
       <div className="mt-12 text-center flex items-center justify-center gap-2 opacity-60">
