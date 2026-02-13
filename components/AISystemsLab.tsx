@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Section from './Section';
-import { FlaskConical, Zap, Activity, Cpu, BarChart4, ArrowRight, BookOpen, ChevronDown, Map } from 'lucide-react';
+import { FlaskConical, Zap, Activity, Cpu, BarChart4, ArrowRight, BookOpen, ChevronDown, Map, Box, Lock, MousePointer2 } from 'lucide-react';
 
 const GoldPricePrototype: React.FC = () => {
   const [price, setPrice] = useState(2342.50);
@@ -261,6 +261,76 @@ const SystemRoadmap: React.FC = () => {
   );
 };
 
+const ProductBetaZone: React.FC = () => {
+  const products = [
+    {
+      title: "Gold Intelligence AI",
+      desc: "Real-time commodities insight engine processing market signals in milliseconds.",
+      tag: "FinTech",
+      icon: Zap
+    },
+    {
+      title: "Adaptive Model Monitor",
+      desc: "Self-healing drift detection system that adjusts thresholds based on seasonality.",
+      tag: "MLOps",
+      icon: Activity
+    },
+    {
+      title: "Decision Sim Engine",
+      desc: "Causal inference sandbox to model how KPI changes impact bottom-line revenue.",
+      tag: "Analytics",
+      icon: BarChart4
+    }
+  ];
+
+  return (
+    <div className="mt-24 border-t border-gray-800/50 pt-16">
+      <div className="text-center max-w-2xl mx-auto mb-16">
+        <h3 className="text-accent font-medium uppercase tracking-wider text-xs mb-3">AI Product Beta Zone</h3>
+        <h2 className="text-3xl font-bold text-white mb-4">Get Early Access to Experimental AI Systems</h2>
+        <p className="text-gray-400 leading-relaxed">
+          A public sandbox for testing early-stage AI prototypes and architectural concepts. 
+          Join the beta to explore these tools in a live environment.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {products.map((p, i) => (
+          <div key={i} className="group bg-surface/40 backdrop-blur-sm border border-gray-800 p-6 rounded-xl hover:border-accent/40 hover:bg-surface/80 hover:-translate-y-1 transition-all duration-300 shadow-lg flex flex-col h-full relative overflow-hidden">
+             
+             {/* Subtle Glow */}
+             <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-3xl -z-10 group-hover:bg-accent/10 transition-colors"></div>
+
+             <div className="flex justify-between items-start mb-6">
+                <div className="p-3 bg-background rounded-lg border border-gray-800 text-white group-hover:border-accent/50 group-hover:text-accent transition-colors">
+                    <p.icon size={20} />
+                </div>
+                <div className="flex items-center gap-1.5 border border-gray-800 px-2 py-1 rounded bg-background/50">
+                    <Lock size={10} className="text-gray-500" />
+                    <span className="text-[10px] font-mono text-gray-500 uppercase tracking-wide">
+                        {p.tag}
+                    </span>
+                </div>
+             </div>
+             
+             <h4 className="text-lg font-bold text-white mb-3 group-hover:text-accent transition-colors">{p.title}</h4>
+             <p className="text-sm text-gray-400 mb-8 flex-grow leading-relaxed">{p.desc}</p>
+             
+             <button className="w-full py-2.5 rounded-lg border border-gray-700 bg-white/5 text-sm font-medium text-gray-300 hover:bg-accent hover:text-black hover:border-accent hover:font-bold transition-all flex items-center justify-center gap-2 group-hover:shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+                Request Beta Access <MousePointer2 size={14} />
+             </button>
+          </div>
+        ))}
+      </div>
+      
+      <div className="mt-12 text-center flex items-center justify-center gap-2 opacity-60">
+         <Box size={14} className="text-gray-500" />
+         <p className="text-xs text-gray-500 font-mono">Built for experimentation. Feedback drives evolution.</p>
+      </div>
+    </div>
+  );
+};
+
 const AISystemsLab: React.FC = () => {
   const experiments = [
     {
@@ -386,6 +456,9 @@ const AISystemsLab: React.FC = () => {
 
       {/* New Systems Roadmap Section */}
       <SystemRoadmap />
+
+      {/* New Product Beta Zone Section */}
+      <ProductBetaZone />
       
     </Section>
   );
