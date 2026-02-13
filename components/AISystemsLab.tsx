@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Section from './Section';
-import { FlaskConical, Zap, Activity, Cpu, BarChart4, ArrowRight } from 'lucide-react';
+import { FlaskConical, Zap, Activity, Cpu, BarChart4, ArrowRight, BookOpen, ChevronDown } from 'lucide-react';
 
 const GoldPricePrototype: React.FC = () => {
   const [price, setPrice] = useState(2342.50);
@@ -100,6 +100,84 @@ const GoldPricePrototype: React.FC = () => {
         </div>
     </div>
   );
+};
+
+const ResearchNotes: React.FC = () => {
+    const [activeId, setActiveId] = useState<string | null>(null);
+
+    const notes = [
+        {
+            id: "rn-1",
+            title: "Improving Small Dataset Robustness",
+            tag: "DATA STRATEGY",
+            content: "When labeled data is scarce (<1k samples), deep learning often fails due to overfitting. I've found success using Transfer Learning (using embeddings from pre-trained foundation models) combined with rigorous Stratified K-Fold cross-validation. Synthetic data generation (SMOTE or LLM-based augmentation) helps, but aggressive regularization (L1/L2) and choosing simpler architectures (Random Forest over Transformer) usually yields the best ROI."
+        },
+        {
+            id: "rn-2",
+            title: "When Not To Deploy ML",
+            tag: "ENGINEERING",
+            content: "Machine Learning introduces high technical debt (data drift, pipeline maintenance, non-deterministic debugging). If a deterministic rule-based heuristic (e.g., 'if X > 5 then Y') achieves 90% of the desired outcome with 1% of the complexity, deploy the rule. ML is reserved for problems where the relationship between variables is too complex or dynamic for manual logic."
+        },
+        {
+            id: "rn-3",
+            title: "Feature Engineering Tradeoffs in Real-Time",
+            tag: "LATENCY",
+            content: "Calculating rolling window aggregates (e.g., 'clicks in last 5 min') at inference time is a latency killer. The tradeoff is Freshness vs. Speed. My preferred pattern: Compute aggregates asynchronously via stream processing (Flink/Kafka) and push to a low-latency key-value store (Redis). The feature might be 1-second stale, but retrieval is O(1) <5ms, preventing API bottlenecks."
+        },
+        {
+            id: "rn-4",
+            title: "Why Most Dashboards Fail Decision-Making",
+            tag: "ANALYTICS",
+            content: "Dashboards often suffer from 'Data Puking'—showing metrics just because we track them. Effective BI tools must be decision-centric. Instead of just 'Total Sales', show 'Sales vs Target' and 'Projected EOM'. Every chart should answer a specific business question or trigger a specific operational workflow, otherwise it is just noise."
+        }
+    ];
+
+    return (
+        <div className="mt-24 max-w-4xl mx-auto border-t border-gray-800/50 pt-16">
+            <div className="flex items-center gap-3 mb-8 px-2">
+                <BookOpen size={20} className="text-purple-400" />
+                <h3 className="text-xl font-bold text-white tracking-tight">Research Notes & AI Exploration Logs</h3>
+            </div>
+            
+            <div className="grid gap-2">
+                {notes.map((note) => (
+                    <div 
+                        key={note.id} 
+                        className={`bg-surface/20 border ${activeId === note.id ? 'border-purple-500/30 bg-surface/40' : 'border-gray-800/50'} rounded-lg transition-all duration-300 overflow-hidden`}
+                    >
+                        <button 
+                            onClick={() => setActiveId(activeId === note.id ? null : note.id)}
+                            className="w-full flex items-center justify-between p-4 text-left hover:bg-white/5 transition-colors"
+                        >
+                            <div className="flex items-center gap-4 sm:gap-6">
+                                <span className="hidden sm:block text-[10px] font-bold font-mono text-gray-500 bg-gray-900/50 border border-gray-800 px-2 py-1 rounded min-w-[90px] text-center tracking-wider">
+                                    {note.tag}
+                                </span>
+                                <span className={`text-sm md:text-base font-medium transition-colors ${activeId === note.id ? 'text-white' : 'text-gray-300'}`}>
+                                    {note.title}
+                                </span>
+                            </div>
+                            <div className={`text-gray-500 transition-transform duration-300 ${activeId === note.id ? 'rotate-180 text-purple-400' : ''}`}>
+                                <ChevronDown size={18} />
+                            </div>
+                        </button>
+                        
+                        <div 
+                            className={`transition-all duration-300 ease-in-out overflow-hidden ${
+                                activeId === note.id ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'
+                            }`}
+                        >
+                            <div className="p-4 pt-0 sm:pl-32 pr-4 md:pr-12 pb-6">
+                                <p className="text-sm text-gray-400 leading-relaxed border-l-2 border-purple-500/20 pl-4">
+                                    {note.content}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
 };
 
 const AISystemsLab: React.FC = () => {
@@ -221,6 +299,10 @@ const AISystemsLab: React.FC = () => {
           </div>
         ))}
       </div>
+
+      {/* New Research Notes Section */}
+      <ResearchNotes />
+      
     </Section>
   );
 };
