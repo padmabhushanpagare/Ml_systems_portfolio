@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Section from './Section';
-import { FlaskConical, Zap, Activity, Cpu, BarChart4, ArrowRight, BookOpen, ChevronDown } from 'lucide-react';
+import { FlaskConical, Zap, Activity, Cpu, BarChart4, ArrowRight, BookOpen, ChevronDown, Map } from 'lucide-react';
 
 const GoldPricePrototype: React.FC = () => {
   const [price, setPrice] = useState(2342.50);
@@ -180,6 +180,87 @@ const ResearchNotes: React.FC = () => {
     );
 };
 
+const SystemRoadmap: React.FC = () => {
+  const roadmap = [
+    {
+      phase: "Phase 1: Built & Deployed",
+      status: "Production Ready",
+      color: "border-emerald-500/50 text-emerald-400",
+      bg: "bg-emerald-500/5",
+      items: [
+        "Real-time Inference (FastAPI + Redis)",
+        "Drift Detection (KL Divergence)",
+        "Feature Stores (Feast)",
+        "Automated CI/CD for ML"
+      ]
+    },
+    {
+      phase: "Phase 2: In Exploration",
+      status: "Active R&D",
+      color: "border-purple-500/50 text-purple-400",
+      bg: "bg-purple-500/5",
+      items: [
+        "Rust-based Serving (Tch-rs)",
+        "Causal Inference for KPIs",
+        "LLM Agents for SQL Generation",
+        "Serverless GPU Inference"
+      ]
+    },
+    {
+      phase: "Phase 3: Future Research",
+      status: "Vision",
+      color: "border-blue-500/50 text-blue-400",
+      bg: "bg-blue-500/5",
+      items: [
+        "Edge ML on WebAssembly (WASM)",
+        "Private Federated Learning",
+        "Self-Healing Data Pipelines",
+        "Multi-Modal RAG Systems"
+      ]
+    }
+  ];
+
+  return (
+    <div className="mt-24 border-t border-gray-800/50 pt-16">
+      <div className="mb-10 flex items-center gap-3">
+        <div className="p-2 bg-gray-800/50 rounded-lg text-gray-300">
+            <Map size={20} />
+        </div>
+        <div>
+            <h3 className="text-xl font-bold text-white tracking-tight">AI Systems Roadmap</h3>
+            <p className="text-sm text-gray-500 mt-1">Strategic trajectory from current operational capabilities to future architectural goals.</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
+        {/* Connector Line (Desktop) */}
+        <div className="hidden md:block absolute top-8 left-0 w-full h-0.5 bg-gradient-to-r from-emerald-500/20 via-purple-500/20 to-blue-500/20 -z-10"></div>
+
+        {roadmap.map((col, idx) => (
+          <div key={idx} className={`relative p-6 rounded-xl border-t border-l border-r border-b-0 md:border-b md:border ${col.color.replace('text', 'border')} ${col.bg} backdrop-blur-sm`}>
+            {/* Dot on line */}
+            <div className="hidden md:block absolute -top-3 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-surface border-2 border-gray-700 z-10"></div>
+            
+            <div className="flex justify-between items-center mb-6">
+                <span className={`text-xs font-bold uppercase tracking-widest ${col.color.split(' ')[1]}`}>{col.status}</span>
+                <span className="text-[10px] text-gray-500 font-mono">0{idx + 1}</span>
+            </div>
+
+            <ul className="space-y-3">
+                {col.items.map((item, i) => (
+                    <li key={i} className="flex items-center gap-3 text-sm text-gray-300">
+                        <div className={`w-1.5 h-1.5 rounded-full ${idx === 0 ? 'bg-emerald-500' : idx === 1 ? 'bg-purple-500' : 'bg-blue-500'}`}></div>
+                        {item}
+                    </li>
+                ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const AISystemsLab: React.FC = () => {
   const experiments = [
     {
@@ -302,6 +383,9 @@ const AISystemsLab: React.FC = () => {
 
       {/* New Research Notes Section */}
       <ResearchNotes />
+
+      {/* New Systems Roadmap Section */}
+      <SystemRoadmap />
       
     </Section>
   );
