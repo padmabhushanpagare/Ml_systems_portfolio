@@ -334,6 +334,63 @@ const ExperimentVoting: React.FC = () => {
     );
 };
 
+const BetaRoadmap: React.FC = () => {
+  const phases = [
+    { label: "Phase 1", title: "Prototype", date: "Q3 2023", status: "completed", desc: "Internal proof-of-concept validation." },
+    { label: "Phase 2", title: "Closed Beta", date: "Q4 2023", status: "current", desc: "Invite-only testing with select partners." },
+    { label: "Phase 3", title: "Public Beta", date: "Q1 2024", status: "upcoming", desc: "Open access for community testing." },
+    { label: "Phase 4", title: "Production", date: "Q2 2024", status: "upcoming", desc: "Full release with SLA guarantees." }
+  ];
+
+  return (
+    <div className="mb-20 max-w-5xl mx-auto">
+      <div className="flex items-center gap-3 mb-10 px-2">
+        <div className="p-2 bg-gray-800/50 rounded-lg text-gray-300">
+           <Map size={18} />
+        </div>
+        <h3 className="text-lg font-bold text-white">Public Beta Roadmap</h3>
+      </div>
+
+      <div className="relative px-2">
+        {/* Mobile Line */}
+        <div className="md:hidden absolute left-[19px] top-2 bottom-2 w-0.5 bg-gray-800"></div>
+        {/* Desktop Line */}
+        <div className="hidden md:block absolute top-[7px] left-0 right-0 h-0.5 bg-gray-800">
+           {/* Progress Line (approx 35% for current status) */}
+           <div className="h-full bg-accent/30 w-[38%]"></div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          {phases.map((phase, idx) => (
+            <div key={idx} className="relative pl-12 md:pl-0 md:pt-8 group">
+              {/* Dot */}
+              <div className={`absolute left-[11px] md:left-1/2 top-0 md:top-0 md:-translate-y-1/2 md:-translate-x-1/2 w-4 h-4 rounded-full border-2 z-10 transition-colors duration-500 bg-surface ${
+                  phase.status === 'completed' ? 'border-accent bg-accent' :
+                  phase.status === 'current' ? 'border-accent shadow-[0_0_15px_rgba(16,185,129,0.5)]' :
+                  'border-gray-700'
+              }`}>
+                 {phase.status === 'current' && <div className="absolute inset-0 rounded-full animate-ping bg-accent/40"></div>}
+              </div>
+              
+              <div className="md:text-center pt-0.5 md:pt-4">
+                <div className={`text-[10px] font-mono mb-1 uppercase tracking-wider ${phase.status === 'upcoming' ? 'text-gray-600' : 'text-accent'}`}>
+                    {phase.label} • {phase.date}
+                </div>
+                <h4 className={`text-sm font-bold mb-2 ${phase.status === 'upcoming' ? 'text-gray-500' : 'text-white'}`}>
+                    {phase.title}
+                </h4>
+                <p className="text-xs text-gray-500 leading-relaxed max-w-[200px] md:mx-auto">
+                    {phase.desc}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const ProductBetaZone: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -436,6 +493,9 @@ const ProductBetaZone: React.FC = () => {
           </div>
         ))}
       </div>
+
+      {/* Beta Roadmap */}
+      <BetaRoadmap />
 
       {/* Beta Access Form */}
       <div id="beta-form" className="max-w-3xl mx-auto scroll-mt-24">
